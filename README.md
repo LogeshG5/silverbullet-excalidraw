@@ -16,7 +16,7 @@ Run `Excalidraw: Create diagram` command and type in the name of the diagram.
 
 In the editor, type the name of the diagram e.g., `flowchart.excalidraw.svg`, select it and run `Excalidraw: Create diagram` command.
 
-Draw.io editor will open. Make your changes and click save.
+Excalidraw editor will open. Make your changes and it is automatically saved. Once done close the editor and refresh the page.
 
 Note: You will have to refresh the page to view the updates.
 
