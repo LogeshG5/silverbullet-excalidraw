@@ -72,6 +72,14 @@ var pluginEventHandler = async function (e) {
                     syscall("space.writeFile", window.diagramPath, message.json);
                 break;
             }
+            case "exit": {
+                console.debug("Exit");
+                await syscall("editor.reloadPage");
+                await syscall("editor.flashNotification", "Refresh page to view changes!");
+                await syscall("editor.hidePanel", "modal");
+                window.removeEventListener('message', pluginEventHandler);
+                break;
+            }
         }
     } catch (error) {
         console.log("Message in Plugin error", error)
