@@ -1,0 +1,21 @@
+name: excalidraw
+version: 0.1
+assets:
+  - "assets/**/*.*"
+imports:
+  - https://get.silverbullet.md/global.plug.json
+requiredPermissions:
+  - shell
+  - fetch
+functions:
+  editexcalidraw:
+    path: ./excalidraw.ts:editExcalidrawDiagram
+    command:
+      name: "Excalidraw: Edit diagram"
+      requireMode: r
+
+  createexcalidraw:
+    path: ./excalidraw.ts:createExcalidrawDiagram
+    command:
+      name: "Excalidraw: Create diagram"
+      requireMode: r

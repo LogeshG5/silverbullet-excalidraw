@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "build": "silverbullet plug:compile -c deno.jsonc excalidraw.plug.yaml",
+    "watch": "silverbullet plug:compile -w -c deno.jsonc excalidraw.plug.yaml"
+  },
+  // "importMap": "import_map.json"
+  "imports": {
+    "@silverbulletmd/silverbullet": "jsr:@silverbulletmd/silverbullet@^0.10.1",
+    "handlebars": "https://esm.sh/handlebars",
+    "$sb/": "https://deno.land/x/silverbullet@0.10.1/plug-api/",
+    "js-base64": "https://cdn.jsdelivr.net/npm/js-base64@3.7.3/base64.min.js" 
+  }
+}
