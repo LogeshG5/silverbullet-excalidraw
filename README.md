@@ -29,3 +29,7 @@ Run `Excalidraw: Edit diagram`.
 If multiple diagrams are present in a page, you will be prompted to choose one.
 
 Note: You will have to refresh the page to view the updates.
+
+---
+
+Thanks to [Brice Dutheil](https://github.com/bric3). This pulugin is based on his [excalidraw-jetbrains-plugin](https://github.com/bric3/excalidraw-jetbrains-plugin).
