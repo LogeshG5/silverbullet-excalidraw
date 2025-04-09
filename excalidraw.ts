@@ -1,8 +1,6 @@
 import {
   asset,
   editor,
-  shell,
-  system,
   space,
 } from "@silverbulletmd/silverbullet/syscalls";
 

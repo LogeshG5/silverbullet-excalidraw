@@ -43,7 +43,7 @@ most the interesting application code is in the `src` directory. Notice the `<di
 ----
 graph LR
 A(Plugin) -->|window.postMessage| B(Excalidraw web app)
-B(Excalidraw web app) -->|window.cefQuery| A(Plugin)
+B(Excalidraw web app) -->|window.postMessage| A(Plugin)
 ----
 
 
@@ -68,7 +68,7 @@ a|*gradle* +
 |===
 
 
-To debug the web app without running IntelliJ, run `./gradlew :excalidraw-assets:yarnRunStart`
+To debug the web app without Silverbullet, run `yarn start`
 
 Then hit http://localhost:3000/ in the browser, you should see the Excalidraw interface.
 

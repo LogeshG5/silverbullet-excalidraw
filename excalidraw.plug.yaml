@@ -5,7 +5,6 @@ assets:
 imports:
   - https://get.silverbullet.md/global.plug.json
 requiredPermissions:
-  - shell
   - fetch
 functions:
   editexcalidraw:

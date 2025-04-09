@@ -261,7 +261,6 @@ class ExcalidrawApiBridge {
                         let base64data = reader.result;
                         thisBridge.dispatchToPlugin({
                             type: "binary-image-base64-content",
-                            // base64Payload: base64data,
                             blob: blob,
                             correlationId: message.correlationId ?? null
                         });
