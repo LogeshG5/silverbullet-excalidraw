@@ -67,6 +67,11 @@ a|*gradle* +
 
 |===
 
+== Copy Build Artifacts
+
+Once `yarn build` is successful, copy `excalidraw-assets/build/static/js/main.*.js` to `assets/main.js`. 
+
+== Debug
 
 To debug the web app without Silverbullet, run `yarn start`
 
@@ -81,5 +86,3 @@ E.g., to save the current sketch, pass the `save-as-svg` message in the browser 
 window.postMessage({ type: "save-as-svg", exportConfig:{}, correlationId: crypto.randomUUID() })
 window.postMessage({ type: "theme-change", theme:"dark", correlationId: crypto.randomUUID() })
 ----
-
-The Excalidraw assets app can also communicate back to the plugin by sending messages via `cefQuery`.
