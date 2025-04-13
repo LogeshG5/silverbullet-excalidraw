@@ -18,3 +18,7 @@ functions:
     command:
       name: "Excalidraw: Create diagram"
       requireMode: r
+  
+  excalidrawWidget:
+    path: ./excalidraw.ts:previewExcalidrawDiagram
+    codeWidget: excalidraw

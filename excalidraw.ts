@@ -80,7 +80,7 @@ export async function createExcalidrawDiagram() {
   let diagramName = selectedText;
   if (diagramName.length == 0) {
     // nothing was selected, prompt user
-    diagramName = await editor.prompt("Enter a diagram name: ", "sample.svg");
+    diagramName = await editor.prompt("Enter a diagram name: ", "");
   }
 
   let ext = getFileExtension(diagramName);
@@ -94,10 +94,6 @@ export async function createExcalidrawDiagram() {
   const directory = pageName.substring(0, pageName.lastIndexOf("/"));
   const filePath = directory + "/" + diagramName;
 
-  // insert link or overwrite link text in editor
-  const link = `![${diagramName}](${diagramName})`;
-  await editor.replaceRange(from, selection.to, link);
-  
   // Ask before overwriting
   const fileExists = await space.fileExists(filePath);
   if (fileExists) {
@@ -109,6 +105,29 @@ export async function createExcalidrawDiagram() {
     }
   }
 
+  if (ext == "svg" || ext == "png") {
+    // insert link or overwrite link text in editor
+    const link = `![${diagramName}](${diagramName})`;
+    await editor.replaceRange(from, selection.to, link);
+  }
+  else if (ext == "excalidraw") {
+    // insert code block
+    const fileContent = new TextEncoder().encode(
+      `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
+    );
+    await space.writeFile(filePath, fileContent);
+
+    const codeBlock = `\`\`\`excalidraw
+url: ${filePath}
+\`\`\``;
+    await editor.replaceRange(from, selection.to, codeBlock);
+  }
+
   // open file in editor
   await excalidrawEdit(filePath);
+}
+
+
+export async function previewExcalidrawDiagram() {
+
 }
