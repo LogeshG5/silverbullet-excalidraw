@@ -12,10 +12,6 @@ var pluginEventHandler = async function (e) {
             case "ready": {
                 const uint8arr = await syscall("space.readFile", window.diagramPath);
                 let file = null;
-                const theme = await syscall("clientStore.get", "darkMode") ? "dark": "light"
-                const evTheme = new MessageEvent('message', { data: { type: "theme-change", theme: theme } });
-                window.dispatchEvent(evTheme);
-
                 switch (getExtension(window.diagramPath)) {
                     case "svg": {
                         const blob = new Blob([uint8arr], { type: 'image/svg+xml' });
@@ -34,7 +30,7 @@ var pluginEventHandler = async function (e) {
                     }
                 }
 
-                const ev = new MessageEvent('message', { data: { type: "load-from-file", blob: file } });
+                const ev = new MessageEvent('message', { data: { type: "load-from-file", blob: file, theme: window.excalidrawTheme } });
                 window.dispatchEvent(ev);
                 break;
             }
@@ -91,7 +87,7 @@ var pluginEventHandler = async function (e) {
             }
         }
     } catch (error) {
-        console.log("Message in Plugin error", error)
+        console.log("Error at Plugin:", error)
     }
 }
 

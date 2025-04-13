@@ -2,6 +2,7 @@ import {
   asset,
   editor,
   space,
+  clientStore
 } from "@silverbulletmd/silverbullet/syscalls";
 
 function getFileExtension(filename: string): string {
@@ -26,6 +27,7 @@ export async function excalidrawEdit(diagramPath: string) {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/main.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
+  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   await editor.showPanel(
     "modal",
     1,
@@ -33,6 +35,7 @@ export async function excalidrawEdit(diagramPath: string) {
     `
      ${exjs};
      window.diagramPath = "${diagramPath}";
+     window.excalidrawTheme = "${spaceTheme}";
      ${utilsjs};
     `
   );
@@ -125,7 +128,7 @@ export async function createExcalidrawDiagram() {
 
     const codeBlock = `\`\`\`excalidraw
 url:${filePath}
-height: 500px
+height: 500
 \`\`\``;
     await editor.replaceRange(from, selection.to, codeBlock);
   }
@@ -142,9 +145,14 @@ export async function previewExcalidrawDiagram(
 
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
   const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
+  const themeMatch = widgetContents.match(/theme:\s*(.+)/i);
 
   const url = urlMatch ? urlMatch[1].trim() : null;
   const height = (heightMatch ? heightMatch[1].trim() : "500") + "px";
+
+  // use theme specified in code widget, if not use theme of current space
+  const spaceTheme = (await clientStore.get("darkMode")) ? "dark": "light" ;
+  const theme = themeMatch ? themeMatch[1].trim() : spaceTheme;
 
   if (!space.fileExists(url)) {
     return { html: `<pre>File does not exist</pre>`, script: `` };
@@ -171,6 +179,7 @@ export async function previewExcalidrawDiagram(
     script: ` ${exjs};
      window.diagramPath = "${url}";
      window.diagramMode = "embed";
+     window.excalidrawTheme = "${theme}";
      ${utilsjs};`,
   };
 }

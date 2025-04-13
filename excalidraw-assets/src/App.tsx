@@ -12,14 +12,19 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { RestoredDataState } from "@excalidraw/excalidraw/types/data/restore";
 import { Theme } from "@excalidraw/excalidraw/types/element/types";
 import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
-
+declare global {
+    const syscall: (name: string, ...args: any[]) => Promise<any>;
+    var silverbullet: {
+        syscall: (name: string, ...args: any[]) => Promise<any>;
+    };
+}
 // hack to access the non typed window object (any) to add old school javascript
 let anyWindow = (window as any);
 
 const defaultInitialData = {
     readOnly: false,
     gridMode: false,
-    zenMode: false,
+    zenMode: false,   
     theme: "light",
     debounceAutoSaveInMs: 300
 }
@@ -177,6 +182,7 @@ class ExcalidrawApiBridge {
 
                 const { blob } = message;
                 this.continuousSavingEnabled = true;
+                this._setTheme!(message.theme);
                 try {
                     loadFromBlob(blob, null, null).then((restoredState: RestoredDataState | undefined) => {
 
@@ -283,7 +289,7 @@ export const MaxOrCloseButton = () => {
         style={{
             zIndex: 1000,
             background: "transparent",
-            color: "#222",
+            color: "#777",
             border: "none",
             borderRadius: 4,
             padding: "4px 8px",
@@ -298,7 +304,7 @@ export const MaxOrCloseButton = () => {
         style={{
             zIndex: 1000,
             background: "transparent",
-            color: "#222",
+            color: "#777",
             border: "none",
             borderRadius: 4,
             padding: "4px 8px",
