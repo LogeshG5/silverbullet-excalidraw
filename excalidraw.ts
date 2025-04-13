@@ -85,9 +85,12 @@ export async function createExcalidrawDiagram() {
 
   let ext = getFileExtension(diagramName);
   if (ext != "svg" && ext != "png" && ext != "excalidraw") {
-    // extension not provided, choose svg as default for better quality
-    ext = "svg";
-    diagramName = diagramName + "." + ext;
+    // extension not provided
+    await editor.flashNotification(
+      "Extensions must be one of .svg, .png or .excalidraw",
+      "error"
+    );
+    return;
   }
 
   const pageName = await editor.getCurrentPage();
@@ -109,6 +112,9 @@ export async function createExcalidrawDiagram() {
     // insert link or overwrite link text in editor
     const link = `![${diagramName}](${diagramName})`;
     await editor.replaceRange(from, selection.to, link);
+
+    // open file in editor
+    await excalidrawEdit(filePath);
   }
   else if (ext == "excalidraw") {
     // insert code block
@@ -123,8 +129,6 @@ url: ${filePath}
     await editor.replaceRange(from, selection.to, codeBlock);
   }
 
-  // open file in editor
-  await excalidrawEdit(filePath);
 }
 
 
