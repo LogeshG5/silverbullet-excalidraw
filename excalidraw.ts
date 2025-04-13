@@ -22,14 +22,14 @@ function getDiagrams(text: string) {
   return matches;
 }
 
-async function excalidrawEdit(diagramPath: string) {
+export async function excalidrawEdit(diagramPath: string) {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/main.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
   await editor.showPanel(
     "modal",
     1,
-    `${exhtml} `,
+    `${exhtml}`,
     `
      ${exjs};
      window.diagramPath = "${diagramPath}";
@@ -124,14 +124,53 @@ export async function createExcalidrawDiagram() {
     await space.writeFile(filePath, fileContent);
 
     const codeBlock = `\`\`\`excalidraw
-url: ${filePath}
+url:${filePath}
+height: 500px
 \`\`\``;
     await editor.replaceRange(from, selection.to, codeBlock);
   }
 
 }
 
+export async function previewExcalidrawDiagram(
+  widgetContents: string
+): Promise<{ html: string; script: string }> {
 
-export async function previewExcalidrawDiagram() {
+  const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
+  const exjs = await asset.readAsset("excalidraw", "assets/main.js");
+  const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
 
+  const urlMatch = widgetContents.match(/url:\s*(.+)/i);
+  const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
+
+  const url = urlMatch ? urlMatch[1].trim() : null;
+  const height = (heightMatch ? heightMatch[1].trim() : "500") + "px";
+
+  if (!space.fileExists(url)) {
+    return { html: `<pre>File does not exist</pre>`, script: `` };
+  }
+
+  return {
+    html: `<head>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      height: ${height};
+    }
+    .excalidraw-wrapper {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>`,
+    script: ` ${exjs};
+     window.diagramPath = "${url}";
+     window.diagramMode = "embed";
+     ${utilsjs};`,
+  };
 }

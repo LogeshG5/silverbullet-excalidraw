@@ -80,6 +80,11 @@ var pluginEventHandler = async function (e) {
                 window.removeEventListener('message', pluginEventHandler);
                 break;
             }
+            case "fullscreen": {
+                console.debug("fullscreen");
+                await syscall("system.invokeFunction", "excalidraw.editExcalidrawFull", window.diagramPath);
+                break;
+            }
         }
     } catch (error) {
         console.log("Message in Plugin error", error)

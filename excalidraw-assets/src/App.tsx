@@ -275,6 +275,47 @@ class ExcalidrawApiBridge {
 let apiBridge: ExcalidrawApiBridge | null = null;
 
 
+export const MaxOrCloseButton = () => {
+    const close = (<button
+        onClick={() => {
+            apiBridge!.dispatchToPlugin({ type: "exit" });
+        }}
+        style={{
+            zIndex: 1000,
+            background: "transparent",
+            color: "#222",
+            border: "none",
+            borderRadius: 4,
+            padding: "4px 8px",
+            cursor: "pointer"
+        }}
+    >✖</button>)
+
+    const fullscreen = (<button
+        onClick={() => {
+            apiBridge!.dispatchToPlugin({ type: "fullscreen" });
+        }}
+        style={{
+            zIndex: 1000,
+            background: "transparent",
+            color: "#222",
+            border: "none",
+            borderRadius: 4,
+            padding: "4px 8px",
+            cursor: "pointer"
+        }}
+    >⛶</button>)
+
+    if (anyWindow.diagramMode == "embed") {
+        return fullscreen;
+    }
+    else {
+        return close;
+    }
+
+}
+
+
 export const App = () => {
     const excalidrawApiRef = React.useRef<ExcalidrawImperativeAPI | null>(null);
     apiBridge = new ExcalidrawApiBridge(excalidrawApiRef)
@@ -331,20 +372,7 @@ export const App = () => {
                     }
                 }}
                 renderTopRightUI={() => (
-                    <button
-                        onClick={() => {
-                            apiBridge!.dispatchToPlugin({ type: "exit" });
-                        }}
-                        style={{
-                            zIndex: 1000,
-                            background: "transparent",
-                            color: "#222",
-                            border: "none",
-                            borderRadius: 4,
-                            padding: "4px 8px",
-                            cursor: "pointer"
-                        }}
-                    >✖</button>
+                    <MaxOrCloseButton />
                 )}
             >
                 { /*
