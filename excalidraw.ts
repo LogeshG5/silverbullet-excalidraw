@@ -25,7 +25,7 @@ function getDiagrams(text: string): string[] {
 
 export async function openEditor(diagramPath: string): Promise<void> {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
-  const exjs = await asset.readAsset("excalidraw", "assets/main.js");
+  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const js = `
@@ -153,7 +153,7 @@ height: 500
 export async function previewExcalidrawDiagram(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
-  const exjs = await asset.readAsset("excalidraw", "assets/main.js");
+  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
 
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
