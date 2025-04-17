@@ -24,4 +24,8 @@ functions:
     codeWidget: excalidraw
 
   editExcalidrawFull:
-    path: ./excalidraw.ts:excalidrawEdit
+    path: ./excalidraw.ts:openEditor
+
+  ExcalidrawEditor:
+    path: ./excalidraw.ts:editExcalidrawDiagram
+    editor: ["excalidraw"]

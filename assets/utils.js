@@ -1,94 +1,107 @@
-function getExtension(filename) {
-    const base = filename.split('/').pop(); // remove path
-    const parts = base.split('.');
-    return parts.length > 1 ? parts.pop() : ''; // return '' if no extension
-}
-
-var pluginEventHandler = async function (e) {
+async function pluginEventHandler(event) {
     try {
-        const message = e.data;
-        console.debug("got event in plugin: " + message);
+        const message = event.data;
+        console.debug(`got event in plugin: ${message}`);
+        event.stopPropagation();
         switch (message.type) {
-            case "ready": {
-                const uint8arr = await syscall("space.readFile", window.diagramPath);
-                let file = null;
-                switch (getExtension(window.diagramPath)) {
-                    case "svg": {
-                        const blob = new Blob([uint8arr], { type: 'image/svg+xml' });
-                        file = new File([blob], "image.svg", { type: "image/svg+xml" });
-                        break;
-                    }
-                    case "png": {
-                        const blob = new Blob([uint8arr], { type: 'image/png' });
-                        file = new File([blob], "image.png", { type: "image/png" });
-                        break;
-                    }
-                    case "excalidraw": {
-                        const blob = new Blob([uint8arr], { type: 'application/json' });
-                        file = new File([blob], "image.excalidraw", { type: "application/json" });
-                        break;
-                    }
-                }
-
-                const ev = new MessageEvent('message', { data: { type: "load-from-file", blob: file, theme: window.excalidrawTheme } });
-                window.dispatchEvent(ev);
+            case "ready":
+                await handleReady(message);
                 break;
-            }
-            case "continuous-update": {
-                let ev = null;
-                switch (getExtension(window.diagramPath)) {
-                    case "svg": {
-                        ev = new MessageEvent('message', { data: { type: "save-as-svg" } });
-                        break;
-                    }
-                    case "png": {
-                        ev = new MessageEvent('message', { data: { type: "save-as-binary-image" } });
-                        break;
-                    }
-                    case "excalidraw": {
-                        ev = new MessageEvent('message', { data: { type: "save-as-json" } });
-                        break;
-                    }
-                    default: {
-                        console.log("Unknown format");
-                        break;
-                    }
-                }
-                window.dispatchEvent(ev);
+            case "continuous-update":
+                handleContinuousUpdate();
                 break;
-            }
-            case "svg-content": {
-                await
-                    syscall("space.writeFile", window.diagramPath, message.svg);
+            case "svg-content":
+                await saveFile(message.svg);
                 break;
-            }
-            case "binary-image-base64-content": {
-                await
-                    syscall("space.writeFile", window.diagramPath, message.blob);
+            case "binary-image-base64-content":
+                await saveFile(message.blob);
                 break;
-            }
-            case "json-content": {
-                await
-                    syscall("space.writeFile", window.diagramPath, message.json);
+            case "json-content":
+                await saveFile(message.json);
                 break;
-            }
-            case "exit": {
-                console.debug("Exit");
-                await syscall("editor.reloadPage");
-                await syscall("editor.flashNotification", "Refresh page to view changes!");
-                await syscall("editor.hidePanel", "modal");
-                window.removeEventListener('message', pluginEventHandler);
+            case "exit":
+                await handleExit();
                 break;
-            }
-            case "fullscreen": {
-                console.debug("fullscreen");
+            case "fullscreen":
                 await syscall("system.invokeFunction", "excalidraw.editExcalidrawFull", window.diagramPath);
                 break;
-            }
         }
     } catch (error) {
-        console.log("Error at Plugin:", error)
+        console.error("Error in pluginEventHandler:", error);
     }
 }
 
-window.addEventListener('message', pluginEventHandler);
+async function saveFile(data) {
+    await syscall("space.writeFile", window.diagramPath, data);
+}
+
+async function handleReady(message) {
+    const fileData = await syscall("space.readFile", window.diagramPath);
+    const fileExtension = getExtension(window.diagramPath);
+    const blob = getBlob(fileData, fileExtension);
+
+    const loadEvent = new MessageEvent("message", {
+        data: { type: "load-from-file", blob: blob, theme: window.excalidrawTheme },
+    });
+    window.dispatchEvent(loadEvent);
+}
+
+function handleContinuousUpdate() {
+    const fileExtension = getExtension(window.diagramPath);
+    const saveEventType = getSaveEventType(fileExtension);
+    if (saveEventType) {
+        const saveEvent = new MessageEvent("message", { data: { type: saveEventType } });
+        window.dispatchEvent(saveEvent);
+    } else {
+        console.error("Unknown format");
+    }
+}
+
+async function handleExit() {
+    handleContinuousUpdate();
+    window.removeEventListener("message", pluginEventHandler);
+    const page = await syscall("editor.getCurrentPage");
+    console.log("Current Page", page);
+    await syscall("editor.navigate", page, true, true);
+    await syscall("editor.hidePanel", "modal");
+}
+
+function getExtension(filename) {
+    const base = filename.split("/").pop();
+    const parts = base.split(".");
+    return parts.length > 1 ? parts.pop() : "";
+}
+
+function getBlob(fileData, fileExtension) {
+    const blob = new Blob([fileData], { type: getMimeType(fileExtension) });
+    const file = new File([blob], `image.${fileExtension}`, { type: getMimeType(fileExtension) });
+    return file;
+}
+
+function getMimeType(fileExtension) {
+    switch (fileExtension) {
+        case "svg":
+            return "image/svg+xml";
+        case "png":
+            return "image/png";
+        case "excalidraw":
+            return "application/json";
+        default:
+            return "";
+    }
+}
+
+function getSaveEventType(fileExtension) {
+    switch (fileExtension) {
+        case "svg":
+            return "save-as-svg";
+        case "png":
+            return "save-as-binary-image";
+        case "excalidraw":
+            return "save-as-json";
+        default:
+            return null;
+    }
+}
+
+window.addEventListener("message", pluginEventHandler);

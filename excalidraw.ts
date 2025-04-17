@@ -2,7 +2,7 @@ import {
   asset,
   editor,
   space,
-  clientStore
+  clientStore,
 } from "@silverbulletmd/silverbullet/syscalls";
 
 function getFileExtension(filename: string): string {
@@ -10,53 +10,61 @@ function getFileExtension(filename: string): string {
   return index !== -1 ? filename.slice(index + 1) : "";
 }
 
-function getDiagrams(text: string) {
+function getDiagrams(text: string): string[] {
   const regex = /\((.*?)\)/g;
-  let matches: string[] = [];
-  let match;
+  const matches: string[] = [];
+  let match: RegExpExecArray | null;
   while ((match = regex.exec(text)) !== null) {
     const ext = getFileExtension(match[1]);
-    if (ext == "svg" || ext == "png" || ext == "excalidraw") {
+    if (ext === "svg" || ext === "png" || ext === "excalidraw") {
       matches.push(match[1]);
     }
   }
   return matches;
 }
 
-export async function excalidrawEdit(diagramPath: string) {
+export async function openEditor(diagramPath: string): Promise<void> {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/main.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-  await editor.showPanel(
-    "modal",
-    1,
-    `${exhtml}`,
-    `
+  const js = `
      ${exjs};
      window.diagramPath = "${diagramPath}";
      window.excalidrawTheme = "${spaceTheme}";
      ${utilsjs};
-    `
+    `;
+  await editor.showPanel(
+    "modal",
+    1,
+    exhtml,
+    js
   );
 }
 
-export async function editExcalidrawDiagram() {
+/* "Excalidraw: Edit diagram" 
+
+looks for attached diagrams 
+Prompts the user to select one attachment 
+Opens the editor
+
+*/
+export async function editExcalidrawDiagram(): Promise<void> {
   const pageName = await editor.getCurrentPage();
   const directory = pageName.substring(0, pageName.lastIndexOf("/"));
   const text = await editor.getText();
-  let matches = getDiagrams(text);
+  const matches = getDiagrams(text);
 
   let diagramPath = "";
-  if (matches.length == 0) {
-    editor.flashNotification(
-      "No png or svg diagrams attached to this page!",
+  if (matches.length === 0) {
+    await editor.flashNotification(
+      "No png, svg or excalidraw diagrams attached to this page!",
       "error"
     );
     return;
   }
-  if (matches.length == 1) {
-    diagramPath = directory + "/" + matches[0];
+  if (matches.length === 1) {
+    diagramPath = `${directory}/${matches[0]}`;
   } else {
     const options = matches.map((model) => ({
       name: model,
@@ -67,27 +75,36 @@ export async function editExcalidrawDiagram() {
       await editor.flashNotification("No diagram selected!", "error");
       return;
     }
-    diagramPath = directory + "/" + selectedDiagram.name;
+    diagramPath = `${directory}/${selectedDiagram.name}`;
   }
 
-  await excalidrawEdit(diagramPath);
+  await openEditor(diagramPath);
 }
 
-export async function createExcalidrawDiagram() {
-  // extract selected text from editor
+/* "Excalidraw: Create diagram" 
+
+Prompts for a filename
+Creates a diagram file
+Updates the code editor by adding a
+  code block -> if the file is .excalidraw
+  attachment to the image -> if the file is .png / .svg
+
+*/
+
+export async function createExcalidrawDiagram(): Promise<void | false> {
   const text = await editor.getText();
   const selection = await editor.getSelection();
   const from = selection.from;
-  let selectedText = text.slice(from, selection.to);
+  const selectedText = text.slice(from, selection.to);
 
   let diagramName = selectedText;
-  if (diagramName.length == 0) {
+  if (diagramName.length === 0) {
     // nothing was selected, prompt user
     diagramName = await editor.prompt("Enter a diagram name: ", "");
   }
 
-  let ext = getFileExtension(diagramName);
-  if (ext != "svg" && ext != "png" && ext != "excalidraw") {
+  const ext = getFileExtension(diagramName);
+  if (ext !== "svg" && ext !== "png" && ext !== "excalidraw") {
     // extension not provided
     await editor.flashNotification(
       "Extensions must be one of .svg, .png or .excalidraw",
@@ -98,7 +115,7 @@ export async function createExcalidrawDiagram() {
 
   const pageName = await editor.getCurrentPage();
   const directory = pageName.substring(0, pageName.lastIndexOf("/"));
-  const filePath = directory + "/" + diagramName;
+  const filePath = `${directory}/${diagramName}`;
 
   // Ask before overwriting
   const fileExists = await space.fileExists(filePath);
@@ -111,15 +128,13 @@ export async function createExcalidrawDiagram() {
     }
   }
 
-  if (ext == "svg" || ext == "png") {
-    // insert link or overwrite link text in editor
+  if (ext === "svg" || ext === "png") {
     const link = `![${diagramName}](${diagramName})`;
     await editor.replaceRange(from, selection.to, link);
 
     // open file in editor
-    await excalidrawEdit(filePath);
-  }
-  else if (ext == "excalidraw") {
+    await openEditor(filePath);
+  } else if (ext === "excalidraw") {
     // insert code block
     const fileContent = new TextEncoder().encode(
       `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
@@ -132,14 +147,12 @@ height: 500
 \`\`\``;
     await editor.replaceRange(from, selection.to, codeBlock);
   }
-
 }
 
+// Previewer iframe for the code widget
 export async function previewExcalidrawDiagram(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
-
-  const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/main.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
 
@@ -151,35 +164,38 @@ export async function previewExcalidrawDiagram(
   const height = (heightMatch ? heightMatch[1].trim() : "500") + "px";
 
   // use theme specified in code widget, if not use theme of current space
-  const spaceTheme = (await clientStore.get("darkMode")) ? "dark": "light" ;
+  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const theme = themeMatch ? themeMatch[1].trim() : spaceTheme;
 
-  if (!space.fileExists(url)) {
-    return { html: `<pre>File does not exist</pre>`, script: `` };
+  if (!url || !(await space.fileExists(url))) {
+    return { html: `<pre>File does not exist</pre>`, script: "" };
   }
 
+  const html = `<head>
+                <style>
+                  body {
+                    padding: 0;
+                    margin: 0;
+                    height: ${height};
+                  }
+                  .excalidraw-wrapper {
+                    width: 100vw;
+                    height: 100vh;
+                  }
+                </style>
+              </head>
+              <body>
+                <div id="root"></div>
+              </body>
+              </html>`
+  
+  const js = ` ${exjs};
+              window.diagramPath = "${url}";
+              window.diagramMode = "embed";
+              window.excalidrawTheme = "${theme}";
+              ${utilsjs};`;
   return {
-    html: `<head>
-  <style>
-    body {
-      padding: 0;
-      margin: 0;
-      height: ${height};
-    }
-    .excalidraw-wrapper {
-      width: 100vw;
-      height: 100vh;
-    }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-</body>
-</html>`,
-    script: ` ${exjs};
-     window.diagramPath = "${url}";
-     window.diagramMode = "embed";
-     window.excalidrawTheme = "${theme}";
-     ${utilsjs};`,
+    html: html,
+    script: js,
   };
 }
