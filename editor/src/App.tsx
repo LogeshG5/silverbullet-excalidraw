@@ -83,6 +83,7 @@ class ExcalidrawApiBridge {
 
     private updateApp = ({ elements, appState }: { elements: any[]; appState: object }): void => {
         this.excalidraw().updateScene({ elements, appState });
+        this.excalidraw().scrollToContent();
     };
 
     private updateAppState = (appState: object): void => {
@@ -192,7 +193,7 @@ class ExcalidrawApiBridge {
                 const updateSceneVersion = getSceneVersion(restoredState.elements);
                 if (this.currentSceneVersion !== updateSceneVersion) {
                     this.currentSceneVersion = updateSceneVersion;
-                    console.log("Call updateApp and scene");
+                    console.debug("Call updateApp and scene");
                     this.updateApp({ elements: restoredState.elements || [], appState: {} });
                 }
             })

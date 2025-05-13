@@ -62,7 +62,11 @@ async function handleExit() {
     window.removeEventListener("message", pluginEventHandler);
     const page = await syscall("editor.getCurrentPage");
     console.log("Current Page", page);
-    await syscall("editor.navigate", page, true, true);
+    await syscall("sync.scheduleSpaceSync");
+    await syscall("editor.reloadUI");
+    // await syscall("codeWidget.refreshAll");
+    // await syscall("editor.reloadPage");
+    // await syscall("editor.navigate", page, true, false);
     await syscall("editor.hidePanel", "modal");
 }
 

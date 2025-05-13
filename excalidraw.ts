@@ -187,7 +187,7 @@ export async function previewExcalidrawDiagram(
               <body>
                 <div id="root"></div>
               </body>
-              </html>`
+              </html>`;
   
   const js = ` ${exjs};
               window.diagramPath = "${url}";
