@@ -6,6 +6,7 @@ import {
     getSceneVersion,
     loadFromBlob,
     serializeAsJSON,
+    MainMenu
 } from "@excalidraw/excalidraw";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { RestoredDataState } from "@excalidraw/excalidraw/types/data/restore";
@@ -265,6 +266,7 @@ export const MaxOrCloseButton = (): JSX.Element => {
     const fullscreen = (
         <button
             onClick={() => apiBridge!.dispatchToPlugin({ type: "fullscreen" })}
+            title="Fullscreen"
             style={{
                 zIndex: 1000,
                 background: "transparent",
@@ -273,9 +275,11 @@ export const MaxOrCloseButton = (): JSX.Element => {
                 borderRadius: 4,
                 padding: "4px 8px",
                 cursor: "pointer",
+                fontSize: "110%",
+
             }}
         >
-            ⛶
+            ❖
         </button>
     );
 
@@ -318,10 +322,21 @@ export const App = (): JSX.Element => {
                 gridModeEnabled={gridModeEnabled}
                 theme={theme}
                 UIOptions={{
-                    canvasActions: { loadScene: false, saveAsImage: false, saveToActiveFile: false },
+                    canvasActions: {},
                 }}
                 renderTopRightUI={() => <MaxOrCloseButton />}
-            />
+            >
+                <MainMenu>
+                    <MainMenu.DefaultItems.LoadScene />
+                    <MainMenu.DefaultItems.Export />
+                    <MainMenu.DefaultItems.SaveAsImage />
+                    <MainMenu.Separator />
+                    <MainMenu.DefaultItems.Help />
+                    <MainMenu.DefaultItems.ClearCanvas />
+                    <MainMenu.DefaultItems.ToggleTheme />
+                    <MainMenu.DefaultItems.ChangeCanvasBackground />
+                </MainMenu>
+            </Excalidraw>
         </div>
     );
 };
