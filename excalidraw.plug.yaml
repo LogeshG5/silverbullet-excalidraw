@@ -13,10 +13,16 @@ functions:
       name: "Excalidraw: Edit diagram"
       requireMode: r
 
-  createDiagram:
-    path: ./excalidraw.ts:createDiagram
+  createDiagramAsWidget:
+    path: ./excalidraw.ts:createDiagramAsWidget
     command:
       name: "Excalidraw: Create diagram"
+      requireMode: r
+  
+  createDiagramAsAttachment:
+    path: ./excalidraw.ts:createDiagramAsAttachment
+    command:
+      name: "Excalidraw: Create SVG/PNG diagram"
       requireMode: r
   
   showWidget:

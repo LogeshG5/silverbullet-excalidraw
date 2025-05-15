@@ -6,6 +6,8 @@ import {
 } from "@silverbulletmd/silverbullet/syscalls";
 import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
+type DiagramType = "Widget" | "Attachment";
+
 function getFileExtension(filename: string): string {
   const index = filename.lastIndexOf(".");
   return index !== -1 ? filename.slice(index + 1) : "";
@@ -92,7 +94,7 @@ Updates the code editor by adding a
 
 */
 
-export async function createDiagram(): Promise<void | false> {
+async function createDiagram(diagramType: DiagramType): Promise<void | false> {
   const text = await editor.getText();
   const selection = await editor.getSelection();
   const from = selection.from;
@@ -100,18 +102,27 @@ export async function createDiagram(): Promise<void | false> {
 
   let diagramName = selectedText;
   if (diagramName.length === 0) {
-    // nothing was selected, prompt user
+    // no text was selected in editor, prompt user
     diagramName = await editor.prompt("Enter a diagram name: ", "");
+  } else {
+    diagramName = await editor.prompt("Enter a diagram name: ", diagramName);
   }
 
   const ext = getFileExtension(diagramName);
-  if (ext !== "svg" && ext !== "png" && ext !== "excalidraw") {
-    // extension not provided
-    await editor.flashNotification(
-      "Extensions must be one of .svg, .png or .excalidraw",
-      "error"
-    );
-    return;
+
+  if (diagramType === "Widget") {
+    if (ext !== "excalidraw") {
+      diagramName = `${diagramName}.excalidraw`;
+    }
+  }
+  else if (diagramType === "Attachment") {
+    if (ext !== "svg" && ext !== "png") {
+      diagramName = `${diagramName}.svg`;
+      await editor.flashNotification(
+        "No extenstion provided, svg chosen",
+        "info"
+      );
+    }
   }
 
   const pageName = await editor.getCurrentPage();
@@ -129,13 +140,7 @@ export async function createDiagram(): Promise<void | false> {
     }
   }
 
-  if (ext === "svg" || ext === "png") {
-    const link = `![${diagramName}](${diagramName})`;
-    await editor.replaceRange(from, selection.to, link);
-
-    // open file in editor
-    await openFullScreenEditor(filePath);
-  } else if (ext === "excalidraw") {
+  if (diagramType === "Widget") {
     // insert code block
     const fileContent = new TextEncoder().encode(
       `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
@@ -148,7 +153,25 @@ height: 500
 \`\`\``;
     await editor.replaceRange(from, selection.to, codeBlock);
   }
+  else if (diagramType==="Attachment") {
+    const link = `![${diagramName}](${diagramName})`;
+    await editor.replaceRange(from, selection.to, link);
+
+    // open file in editor
+    await openFullScreenEditor(filePath);
+  } 
 }
+
+
+export async function createDiagramAsWidget(): Promise<void | false> { 
+  createDiagram("Widget");
+}
+
+ 
+export async function createDiagramAsAttachment(): Promise<void | false> {
+  createDiagram("Attachment");
+}
+
 
 // Previewer iframe for the code widget
 export async function showWidget(
@@ -207,7 +230,7 @@ export function snippetSlashComplete(): SlashCompletions {
       {
         label: "excalidraw",
         detail: "Create new Excalidraw diagram",
-        invoke: "excalidraw.createDiagram",
+        invoke: "excalidraw.createDiagramAsWidget",
       },
     ],
   };
