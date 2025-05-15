@@ -25,3 +25,8 @@ functions:
 
   openFullScreenEditor:
     path: ./excalidraw.ts:openFullScreenEditor
+  
+  excalidrawSlashCommand:
+    path: ./excalidraw.ts:snippetSlashComplete
+    events:
+      - slash:complete

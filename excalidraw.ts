@@ -4,6 +4,7 @@ import {
   space,
   clientStore,
 } from "@silverbulletmd/silverbullet/syscalls";
+import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
 function getFileExtension(filename: string): string {
   const index = filename.lastIndexOf(".");
@@ -197,5 +198,17 @@ export async function showWidget(
   return {
     html: html,
     script: js,
+  };
+}
+
+export function snippetSlashComplete(): SlashCompletions {
+  return {
+    options: [
+      {
+        label: "excalidraw",
+        detail: "Create new Excalidraw diagram",
+        invoke: "excalidraw.createDiagram",
+      },
+    ],
   };
 }
