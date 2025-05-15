@@ -117,7 +117,7 @@ class ExcalidrawApiBridge {
         });
     };
 
-    private saveAsJson = (): string => {
+    saveAsJson = (): string => {
         const binaryFiles: Record<string, any> = {};
         return serializeAsJSON(
             this.excalidraw().getSceneElements(),
@@ -152,7 +152,7 @@ class ExcalidrawApiBridge {
     };
 
 
-    private handleContinuousUpdate = () => {
+    handleContinuousUpdate = () => {
         const fileExtension = getExtension(window.diagramPath);
         const exportConfig = {};
         switch (fileExtension) {
@@ -312,6 +312,25 @@ export const App = (): JSX.Element => {
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     apiBridge = new ExcalidrawApiBridge(excalidrawApiRef);
 
+    let onDrawingChange: any;
+
+    try {
+        silverbullet.addEventListener("file-open", (event) => {
+        });
+        silverbullet.addEventListener("file-update", (event) => {
+        });
+        silverbullet.addEventListener("request-save", () => {
+            silverbullet.sendMessage("file-saved", { apiBridge!.saveAsJson() });
+        });
+        onDrawingChange = async (elements: any, state: object): Promise<void> => {
+            silverbullet.sendMessage("file-changed", {});
+        };
+    } catch (e) {
+        onDrawingChange = async (elements: any, state: object): Promise<void> => {
+            await apiBridge!.debouncedContinuousSaving(elements, state);
+        };
+    }
+
     const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
         syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
@@ -330,9 +349,6 @@ export const App = (): JSX.Element => {
     const [zenModeEnabled, setZenModeEnabled] = useState<boolean>(initialData.zenMode);
     apiBridge.setZenModeEnabled = setZenModeEnabled;
 
-    const onDrawingChange = async (elements: any, state: object): Promise<void> => {
-        await apiBridge!.debouncedContinuousSaving(elements, state);
-    };
 
     return (
         <div className="excalidraw-wrapper">
