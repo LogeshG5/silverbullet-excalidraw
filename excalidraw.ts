@@ -23,7 +23,7 @@ function getDiagrams(text: string): string[] {
   return matches;
 }
 
-export async function openEditor(diagramPath: string): Promise<void> {
+export async function openFullScreenEditor(diagramPath: string): Promise<void> {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
@@ -49,7 +49,7 @@ Prompts the user to select one attachment
 Opens the editor
 
 */
-export async function editExcalidrawDiagram(): Promise<void> {
+export async function editDiagram(): Promise<void> {
   const pageName = await editor.getCurrentPage();
   const directory = pageName.substring(0, pageName.lastIndexOf("/"));
   const text = await editor.getText();
@@ -78,7 +78,7 @@ export async function editExcalidrawDiagram(): Promise<void> {
     diagramPath = `${directory}/${selectedDiagram.name}`;
   }
 
-  await openEditor(diagramPath);
+  await openFullScreenEditor(diagramPath);
 }
 
 /* "Excalidraw: Create diagram" 
@@ -91,7 +91,7 @@ Updates the code editor by adding a
 
 */
 
-export async function createExcalidrawDiagram(): Promise<void | false> {
+export async function createDiagram(): Promise<void | false> {
   const text = await editor.getText();
   const selection = await editor.getSelection();
   const from = selection.from;
@@ -133,7 +133,7 @@ export async function createExcalidrawDiagram(): Promise<void | false> {
     await editor.replaceRange(from, selection.to, link);
 
     // open file in editor
-    await openEditor(filePath);
+    await openFullScreenEditor(filePath);
   } else if (ext === "excalidraw") {
     // insert code block
     const fileContent = new TextEncoder().encode(
@@ -150,7 +150,7 @@ height: 500
 }
 
 // Previewer iframe for the code widget
-export async function previewExcalidrawDiagram(
+export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");

@@ -23,7 +23,7 @@ async function pluginEventHandler(event) {
                 await handleExit();
                 break;
             case "fullscreen":
-                await syscall("system.invokeFunction", "excalidraw.editExcalidrawFull", window.diagramPath);
+                await syscall("system.invokeFunction", "excalidraw.openFullScreenEditor", window.diagramPath);
                 break;
         }
     } catch (error) {

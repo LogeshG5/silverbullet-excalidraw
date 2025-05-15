@@ -7,25 +7,21 @@ imports:
 requiredPermissions:
   - fetch
 functions:
-  editexcalidraw:
-    path: ./excalidraw.ts:editExcalidrawDiagram
+  editDiagram:
+    path: ./excalidraw.ts:editDiagram
     command:
       name: "Excalidraw: Edit diagram"
       requireMode: r
 
-  createexcalidraw:
-    path: ./excalidraw.ts:createExcalidrawDiagram
+  createDiagram:
+    path: ./excalidraw.ts:createDiagram
     command:
       name: "Excalidraw: Create diagram"
       requireMode: r
   
-  excalidrawWidget:
-    path: ./excalidraw.ts:previewExcalidrawDiagram
+  showWidget:
+    path: ./excalidraw.ts:showWidget
     codeWidget: excalidraw
 
-  editExcalidrawFull:
-    path: ./excalidraw.ts:openEditor
-
-  ExcalidrawEditor:
-    path: ./excalidraw.ts:editExcalidrawDiagram
-    editor: ["excalidraw"]
+  openFullScreenEditor:
+    path: ./excalidraw.ts:openFullScreenEditor
