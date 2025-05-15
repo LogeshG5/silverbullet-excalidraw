@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
+import ReactDOM from "react-dom/client";
 import {
     Excalidraw,
     exportToBlob,
@@ -18,6 +19,8 @@ declare global {
     const syscall: (name: string, ...args: any[]) => Promise<any>;
     var silverbullet: {
         syscall: (name: string, ...args: any[]) => Promise<any>;
+        sendMessage: (name: string, ...args: any[]) => Promise<any>;
+        addEventListener: (name: string, callback: (args: any) => void) => void;
     };
     var initialData: {
         readOnly: boolean;
@@ -45,6 +48,24 @@ const defaultInitialData = {
 };
 
 const initialData = window.initialData ?? defaultInitialData;
+
+export function forwardArgs<T extends (...args: any[]) => any>(targetFn: T) {
+    return (...args: Parameters<T>): ReturnType<T> => {
+        return targetFn(...args);
+    };
+}
+
+let syscaller: any;
+try {
+    if (typeof silverbullet !== "undefined") {
+        syscaller = forwardArgs(silverbullet.syscall);
+    } else {
+        syscaller = forwardArgs(syscall);
+    }
+}
+catch (e) {
+
+}
 
 class ExcalidrawApiBridge {
     private readonly excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>;
@@ -137,7 +158,7 @@ class ExcalidrawApiBridge {
         switch (fileExtension) {
             case "svg":
                 this.saveAsSvg(exportConfig).then((svg) => {
-                    syscall("space.writeFile", window.diagramPath, svg.outerHTML);
+                    syscaller("space.writeFile", window.diagramPath, svg.outerHTML);
                 });
                 break;
             case "png":
@@ -146,12 +167,12 @@ class ExcalidrawApiBridge {
                     const reader = new FileReader();
                     reader.readAsDataURL(blob);
                     reader.onloadend = () => {
-                        syscall("space.writeFile", window.diagramPath, blob);
+                        syscaller("space.writeFile", window.diagramPath, blob);
                     };
                 });
                 break;
             case "excalidraw":
-                syscall("space.writeFile", window.diagramPath, this.saveAsJson());
+                syscaller("space.writeFile", window.diagramPath, this.saveAsJson());
                 break;
             default:
                 break;
@@ -186,15 +207,15 @@ class ExcalidrawApiBridge {
                 const errorStr = error instanceof Error ? error.toString() : JSON.stringify(error);
                 console.error(errorStr);
 
-                syscall("editor.flashNotification", errorStr, "error");
+                syscaller("editor.flashNotification", errorStr, "error");
             });
     };
 
     exit = () => {
         this.handleContinuousUpdate();
-        syscall("sync.scheduleSpaceSync").then(x => {
-            syscall("editor.reloadUI");
-            syscall("editor.hidePanel", "modal");
+        syscaller("sync.scheduleSpaceSync").then(() => {
+            syscaller("editor.reloadUI");
+            syscaller("editor.hidePanel", "modal");
         })
     }
 
@@ -237,7 +258,7 @@ export const MaxOrCloseButton = (): JSX.Element => {
         <button
             onClick={
                 () => {
-                    syscall("system.invokeFunction", "excalidraw.openFullScreenEditor", window.diagramPath);
+                    syscaller("system.invokeFunction", "excalidraw.openFullScreenEditor", window.diagramPath);
                 }
             }
             title="Fullscreen"
@@ -293,7 +314,7 @@ export const App = (): JSX.Element => {
 
     const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        syscall("space.readFile", window.diagramPath).then(data => {
+        syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
             const fileExtension = getExtension(window.diagramPath);
             const blob = getBlob(data, fileExtension);
             apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme == "light" ? THEME.LIGHT : THEME.DARK });

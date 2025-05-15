@@ -31,7 +31,11 @@ functions:
 
   openFullScreenEditor:
     path: ./excalidraw.ts:openFullScreenEditor
-  
+    
+  excalidrawEditor:
+    path: ./excalidraw.ts:openExcalidrawEditor
+    editor: ["excalidraw"]
+
   excalidrawSlashCommand:
     path: ./excalidraw.ts:snippetSlashComplete
     events:
