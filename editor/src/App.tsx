@@ -6,7 +6,8 @@ import {
     getSceneVersion,
     loadFromBlob,
     serializeAsJSON,
-    MainMenu
+    MainMenu,
+    THEME
 } from "@excalidraw/excalidraw";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 import { RestoredDataState } from "@excalidraw/excalidraw/types/data/restore";
@@ -26,6 +27,8 @@ declare global {
         debounceAutoSaveInMs: number;
     };
     var diagramMode: string;
+    var diagramPath: string;
+    var excalidrawTheme: string;
 }
 
 interface SceneModes {
@@ -55,7 +58,6 @@ class ExcalidrawApiBridge {
 
     constructor(excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>) {
         this.excalidrawRef = excalidrawRef;
-        window.addEventListener("message", this.pluginMessageHandler.bind(this));
         this.debouncedContinuousSaving = AwesomeDebouncePromise(
             this._continuousSaving,
             initialData.debounceAutoSaveInMs
@@ -128,6 +130,34 @@ class ExcalidrawApiBridge {
         });
     };
 
+
+    private handleContinuousUpdate = () => {
+        const fileExtension = getExtension(window.diagramPath);
+        const exportConfig = {};
+        switch (fileExtension) {
+            case "svg":
+                this.saveAsSvg(exportConfig).then((svg) => {
+                    syscall("space.writeFile", window.diagramPath, svg.outerHTML);
+                });
+                break;
+            case "png":
+                const mimeType = "image/png";
+                this.saveAsBlob(exportConfig, mimeType).then((blob: Blob) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        syscall("space.writeFile", window.diagramPath, blob);
+                    };
+                });
+                break;
+            case "excalidraw":
+                syscall("space.writeFile", window.diagramPath, this.saveAsJson());
+                break;
+            default:
+                break;
+        }
+    }
+
     private _continuousSaving = async (elements: any[], appState: object): Promise<void> => {
         if (!this.continuousSavingEnabled) return;
         console.debug("debounced scene changed");
@@ -135,57 +165,11 @@ class ExcalidrawApiBridge {
         if (this.currentSceneVersion !== newSceneVersion) {
             this.currentSceneVersion = newSceneVersion;
             const jsonContent = this.saveAsJson();
-            this.dispatchToPlugin({ type: "continuous-update", content: jsonContent });
+            this.handleContinuousUpdate();
         }
     };
 
-    dispatchToPlugin = (message: object): void => {
-        console.debug("dispatchToPlugin: ", message);
-        const ev = new MessageEvent("message", { data: message });
-        window.dispatchEvent(ev);
-    };
-
-    private pluginMessageHandler = (e: MessageEvent): void => {
-        const message = e.data;
-        console.debug(`got event: ${message.type}, message: `, message);
-        e.stopPropagation();
-        switch (message.type) {
-            case "update":
-                this.handleUpdate(message);
-                break;
-            case "load-from-file":
-                this.handleLoadFromFile(message);
-                break;
-            case "toggle-read-only":
-                this.handleToggleReadOnly(message);
-                break;
-            case "toggle-scene-modes":
-                this.handleToggleSceneModes(message);
-                break;
-            case "theme-change":
-                this.handleThemeChange(message);
-                break;
-            case "save-as-json":
-                this.handleSaveAsJson(message);
-                break;
-            case "save-as-svg":
-                this.handleSaveAsSvg(message);
-                break;
-            case "save-as-binary-image":
-                this.handleSaveAsBinaryImage(message);
-                break;
-        }
-    };
-
-    private handleUpdate = (message: { elements: any[] }): void => {
-        const updateSceneVersion = getSceneVersion(message.elements);
-        if (this.currentSceneVersion !== updateSceneVersion) {
-            this.currentSceneVersion = updateSceneVersion;
-            this.updateApp({ elements: message.elements || [], appState: {} });
-        }
-    };
-
-    private handleLoadFromFile = (message: { blob: Blob; theme: Theme }): void => {
+    handleLoadFromFile = (message: { blob: Blob; theme: Theme }): void => {
         this.continuousSavingEnabled = true;
         this._setTheme!(message.theme);
         loadFromBlob(message.blob, null, null)
@@ -201,9 +185,18 @@ class ExcalidrawApiBridge {
             .catch((error: unknown) => {
                 const errorStr = error instanceof Error ? error.toString() : JSON.stringify(error);
                 console.error(errorStr);
-                this.dispatchToPlugin({ type: "excalidraw-error", errorMessage: "cannot load image" });
+
+                syscall("editor.flashNotification", errorStr, "error");
             });
     };
+
+    exit = () => {
+        this.handleContinuousUpdate();
+        syscall("sync.scheduleSpaceSync").then(x => {
+            syscall("editor.reloadUI");
+            syscall("editor.hidePanel", "modal");
+        })
+    }
 
     private handleToggleReadOnly = (message: { readOnly: boolean }): void => {
         this._setViewModeEnabled!(message.readOnly);
@@ -218,29 +211,6 @@ class ExcalidrawApiBridge {
     private handleThemeChange = (message: { theme: Theme }): void => {
         this._setTheme!(message.theme);
     };
-
-    private handleSaveAsJson = (message: { correlationId?: string }): void => {
-        this.dispatchToPlugin({ type: "json-content", json: this.saveAsJson(), correlationId: message.correlationId ?? null });
-    };
-
-    private handleSaveAsSvg = (message: { exportConfig?: object; correlationId?: string }): void => {
-        const exportConfig = message.exportConfig ?? {};
-        this.saveAsSvg(exportConfig).then((svg) => {
-            this.dispatchToPlugin({ type: "svg-content", svg: svg.outerHTML, correlationId: message.correlationId ?? null });
-        });
-    };
-
-    private handleSaveAsBinaryImage = (message: { exportConfig?: object; mimeType?: string; correlationId?: string }): void => {
-        const exportConfig = message.exportConfig ?? {};
-        const mimeType = message.mimeType ?? "image/png";
-        this.saveAsBlob(exportConfig, mimeType).then((blob: Blob) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => {
-                this.dispatchToPlugin({ type: "binary-image-base64-content", blob, correlationId: message.correlationId ?? null });
-            };
-        });
-    };
 }
 
 let apiBridge: ExcalidrawApiBridge | null = null;
@@ -248,7 +218,7 @@ let apiBridge: ExcalidrawApiBridge | null = null;
 export const MaxOrCloseButton = (): JSX.Element => {
     const close = (
         <button
-            onClick={() => apiBridge!.dispatchToPlugin({ type: "exit" })}
+            onClick={() => apiBridge!.exit()}
             style={{
                 zIndex: 1000,
                 background: "transparent",
@@ -265,7 +235,11 @@ export const MaxOrCloseButton = (): JSX.Element => {
 
     const fullscreen = (
         <button
-            onClick={() => apiBridge!.dispatchToPlugin({ type: "fullscreen" })}
+            onClick={
+                () => {
+                    syscall("system.invokeFunction", "excalidraw.openFullScreenEditor", window.diagramPath);
+                }
+            }
             title="Fullscreen"
             style={{
                 zIndex: 1000,
@@ -286,13 +260,44 @@ export const MaxOrCloseButton = (): JSX.Element => {
     return window.diagramMode === "embed" ? fullscreen : close;
 };
 
+
+function getBlob(fileData: BlobPart, fileExtension: String) {
+    const blob = new Blob([fileData], { type: getMimeType(fileExtension) });
+    const file = new File([blob], `image.${fileExtension}`, { type: getMimeType(fileExtension) });
+    return file;
+}
+
+function getMimeType(fileExtension: String) {
+    switch (fileExtension) {
+        case "svg":
+            return "image/svg+xml";
+        case "png":
+            return "image/png";
+        case "excalidraw":
+            return "application/json";
+        default:
+            return "";
+    }
+}
+function getExtension(filename: string): string {
+    const base = filename.split("/").pop();
+    if (!base) return ""; // safeguard for undefined or empty
+
+    const parts = base.split(".");
+    return parts.length > 1 ? parts.pop()! : "";
+}
+
 export const App = (): JSX.Element => {
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     apiBridge = new ExcalidrawApiBridge(excalidrawApiRef);
 
     const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        apiBridge!.dispatchToPlugin({ type: "ready" });
+        syscall("space.readFile", window.diagramPath).then(data => {
+            const fileExtension = getExtension(window.diagramPath);
+            const blob = getBlob(data, fileExtension);
+            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme == "light" ? THEME.LIGHT : THEME.DARK });
+        });
     }, []);
 
     const [theme, setTheme] = useState<Theme>(initialData.theme);

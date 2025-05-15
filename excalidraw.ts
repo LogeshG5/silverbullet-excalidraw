@@ -29,13 +29,12 @@ function getDiagrams(text: string): string[] {
 export async function openFullScreenEditor(diagramPath: string): Promise<void> {
   const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const js = `
      ${exjs};
      window.diagramPath = "${diagramPath}";
+     window.diagramMode = "fullscreen";
      window.excalidrawTheme = "${spaceTheme}";
-     ${utilsjs};
     `;
   await editor.showPanel(
     "modal",
@@ -178,7 +177,6 @@ export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const utilsjs = await asset.readAsset("excalidraw", "assets/utils.js");
 
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
   const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
@@ -217,7 +215,7 @@ export async function showWidget(
               window.diagramPath = "${url}";
               window.diagramMode = "embed";
               window.excalidrawTheme = "${theme}";
-              ${utilsjs};`;
+              `;
   return {
     html: html,
     script: js,
