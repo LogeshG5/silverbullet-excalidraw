@@ -44,4 +44,5 @@ If you wish to contribute to this plugin,
 
 ---
 
-Thanks to [Brice Dutheil](https://github.com/bric3). This pulugin is based on his [excalidraw-jetbrains-plugin](https://github.com/bric3/excalidraw-jetbrains-plugin).
+Thanks to [Brice Dutheil](https://github.com/bric3). This pulugin is based on his [excalidraw-jetbrains-plugin](https://github.com/bric3/excalidraw-jetbrains-plugin). 
+Thanks to [Max Richter](https://github.com/jim-fx) for similar plugin [excalidraw-silverbullet](https://github.com/jim-fx/silverbullet-excalidraw) where I lifted/learned some implementation ideas.
