@@ -59,7 +59,7 @@ export async function openFullScreenEditor(diagramPath: string): Promise<void> {
      window.excalidrawTheme = "${spaceTheme}";
     `;
   await editor.showPanel(
-    "bhs",
+    "modal",
     1,
     exhtml,
     js
