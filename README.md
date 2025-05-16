@@ -8,6 +8,8 @@ Run the {[Plugs: Add]} command and paste in: `github:logeshg5/silverbullet-excal
 
 ## Usage
 
+https://github.com/user-attachments/assets/65c8aab8-aa2a-4878-84b9-852ca83d9b53
+
 ### Create New Diagram
 
 Run `Excalidraw: Create diagram` command and type in the name of the diagram.
