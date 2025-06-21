@@ -320,7 +320,7 @@ export const App = (): JSX.Element => {
         silverbullet.addEventListener("file-update", (event) => {
         });
         silverbullet.addEventListener("request-save", () => {
-            silverbullet.sendMessage("file-saved", { apiBridge!.saveAsJson() });
+            silverbullet.sendMessage("file-saved", { data: apiBridge!.saveAsJson() });
         });
         onDrawingChange = async (elements: any, state: object): Promise<void> => {
             silverbullet.sendMessage("file-changed", {});

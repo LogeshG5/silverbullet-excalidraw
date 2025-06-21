@@ -147,7 +147,8 @@ async function createDiagram(diagramType: DiagramType): Promise<void | false> {
   }
 
   const pageName = await editor.getCurrentPage();
-  const directory = pageName.substring(0, pageName.lastIndexOf("/"));
+  const lastSlash = pageName.lastIndexOf("/");
+  const directory = lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
   const filePath = `${directory}/${diagramName}`;
 
   // Ask before overwriting

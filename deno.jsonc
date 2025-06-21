@@ -1,7 +1,7 @@
 {
   "tasks": {
-    "build": "silverbullet plug:compile -c deno.jsonc excalidraw.plug.yaml",
-    "watch": "silverbullet plug:compile -w -c deno.jsonc excalidraw.plug.yaml"
+    "build": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
+    "watch": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -w -c deno.jsonc excalidraw.plug.yaml"
   },
   // "importMap": "import_map.json"
   "imports": {
