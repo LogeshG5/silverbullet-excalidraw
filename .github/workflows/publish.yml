@@ -46,4 +46,4 @@ jobs:
           tag_name: edge
           body: Automated build from commit ${{ github.sha }}
           files: |
-            formatter.plug.js
+            excalidraw.plug.js
