@@ -37,9 +37,9 @@ Note: You will have to refresh the page to view the updates.
 If you wish to contribute to this plugin,
 
 1. Build the excalidraw react app under `editor` directory 
-  1. `cd editor`
-  2. `npm install`
-  3. `npm run build`
+    1. `cd editor`
+    2. `npm install`
+    3. `npm run build`
 2. Go back to the main dir `cd ..` & Build the plugin with `deno task build`
 3. Copy the plugin js `excalidraw.plug.js` to your space `<space>/_plug`
 4. Refresh and reload Silverbullet couple of times
