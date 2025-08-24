@@ -1,5 +1,4 @@
 import React, { useState, useRef, useCallback } from "react";
-import ReactDOM from "react-dom/client";
 import {
     Excalidraw,
     exportToBlob,
@@ -34,10 +33,10 @@ declare global {
     var excalidrawTheme: string;
 }
 
-interface SceneModes {
-    gridMode?: boolean;
-    zenMode?: boolean;
-}
+// interface SceneModes {
+//     gridMode?: boolean;
+//     zenMode?: boolean;
+// }
 
 const defaultInitialData = {
     readOnly: false,
@@ -71,9 +70,9 @@ class ExcalidrawApiBridge {
     private readonly excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>;
     private continuousSavingEnabled = true;
     private _setTheme: React.Dispatch<Theme> | null = null;
-    private _setViewModeEnabled: React.Dispatch<boolean> | null = null;
-    private _setGridModeEnabled: React.Dispatch<boolean> | null = null;
-    private _setZenModeEnabled: React.Dispatch<boolean> | null = null;
+    // private _setViewModeEnabled: React.Dispatch<boolean> | null = null;
+    // private _setGridModeEnabled: React.Dispatch<boolean> | null = null;
+    // private _setZenModeEnabled: React.Dispatch<boolean> | null = null;
     private currentSceneVersion = getSceneVersion([]);
     debouncedContinuousSaving: (elements: any[], appState: object) => Promise<void>;
 
@@ -89,17 +88,17 @@ class ExcalidrawApiBridge {
         this._setTheme = value;
     }
 
-    set setViewModeEnabled(value: React.Dispatch<boolean>) {
-        this._setViewModeEnabled = value;
-    }
-
-    set setGridModeEnabled(value: React.Dispatch<boolean>) {
-        this._setGridModeEnabled = value;
-    }
-
-    set setZenModeEnabled(value: React.Dispatch<boolean>) {
-        this._setZenModeEnabled = value;
-    }
+    // set setViewModeEnabled(value: React.Dispatch<boolean>) {
+    //     this._setViewModeEnabled = value;
+    // }
+    //
+    // set setGridModeEnabled(value: React.Dispatch<boolean>) {
+    //     this._setGridModeEnabled = value;
+    // }
+    //
+    // set setZenModeEnabled(value: React.Dispatch<boolean>) {
+    //     this._setZenModeEnabled = value;
+    // }
 
     private excalidraw(): ExcalidrawImperativeAPI {
         return this.excalidrawRef.current!;
@@ -110,12 +109,12 @@ class ExcalidrawApiBridge {
         this.excalidraw().scrollToContent();
     };
 
-    private updateAppState = (appState: object): void => {
-        this.excalidraw().updateScene({
-            elements: this.excalidraw().getSceneElements(),
-            appState: { ...this.excalidraw().getAppState(), ...appState },
-        });
-    };
+    // private updateAppState = (appState: object): void => {
+    //     this.excalidraw().updateScene({
+    //         elements: this.excalidraw().getSceneElements(),
+    //         appState: { ...this.excalidraw().getAppState(), ...appState },
+    //     });
+    // };
 
     saveAsJson = (): string => {
         const binaryFiles: Record<string, any> = {};
@@ -179,13 +178,13 @@ class ExcalidrawApiBridge {
         }
     }
 
-    private _continuousSaving = async (elements: any[], appState: object): Promise<void> => {
+    private _continuousSaving = async (elements: any[], _: object): Promise<void> => {
         if (!this.continuousSavingEnabled) return;
         console.debug("debounced scene changed");
         const newSceneVersion = getSceneVersion(elements);
         if (this.currentSceneVersion !== newSceneVersion) {
             this.currentSceneVersion = newSceneVersion;
-            const jsonContent = this.saveAsJson();
+            this.saveAsJson();
             this.handleContinuousUpdate();
         }
     };
@@ -219,19 +218,19 @@ class ExcalidrawApiBridge {
         })
     }
 
-    private handleToggleReadOnly = (message: { readOnly: boolean }): void => {
-        this._setViewModeEnabled!(message.readOnly);
-    };
+    // private handleToggleReadOnly = (message: { readOnly: boolean }): void => {
+    //     this._setViewModeEnabled!(message.readOnly);
+    // };
 
-    private handleToggleSceneModes = (message: { sceneModes: SceneModes }): void => {
-        const modes = message.sceneModes ?? {};
-        if ("gridMode" in modes) this._setGridModeEnabled!(modes.gridMode!);
-        if ("zenMode" in modes) this._setZenModeEnabled!(modes.zenMode!);
-    };
+    // private handleToggleSceneModes = (message: { sceneModes: SceneModes }): void => {
+    //     const modes = message.sceneModes ?? {};
+    //     if ("gridMode" in modes) this._setGridModeEnabled!(modes.gridMode!);
+    //     if ("zenMode" in modes) this._setZenModeEnabled!(modes.zenMode!);
+    // };
 
-    private handleThemeChange = (message: { theme: Theme }): void => {
-        this._setTheme!(message.theme);
-    };
+    // private handleThemeChange = (message: { theme: Theme }): void => {
+    //     this._setTheme!(message.theme);
+    // };
 }
 
 let apiBridge: ExcalidrawApiBridge | null = null;
@@ -315,14 +314,14 @@ export const App = (): JSX.Element => {
     let onDrawingChange: any;
 
     try {
-        silverbullet.addEventListener("file-open", (event) => {
+        silverbullet.addEventListener("file-open", (_) => {
         });
-        silverbullet.addEventListener("file-update", (event) => {
+        silverbullet.addEventListener("file-update", (_) => {
         });
         silverbullet.addEventListener("request-save", () => {
             silverbullet.sendMessage("file-saved", { data: apiBridge!.saveAsJson() });
         });
-        onDrawingChange = async (elements: any, state: object): Promise<void> => {
+        onDrawingChange = async (__: any, _: object): Promise<void> => {
             silverbullet.sendMessage("file-changed", {});
         };
     } catch (e) {
@@ -336,18 +335,18 @@ export const App = (): JSX.Element => {
         syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
             const fileExtension = getExtension(window.diagramPath);
             const blob = getBlob(data, fileExtension);
-            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme == "light" ? THEME.LIGHT : THEME.DARK });
+            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
         });
     }, []);
 
     const [theme, setTheme] = useState<Theme>(initialData.theme);
     apiBridge.setTheme = setTheme;
-    const [viewModeEnabled, setViewModeEnabled] = useState<boolean>(initialData.readOnly);
-    apiBridge.setViewModeEnabled = setViewModeEnabled;
-    const [gridModeEnabled, setGridModeEnabled] = useState<boolean>(initialData.gridMode);
-    apiBridge.setGridModeEnabled = setGridModeEnabled;
-    const [zenModeEnabled, setZenModeEnabled] = useState<boolean>(initialData.zenMode);
-    apiBridge.setZenModeEnabled = setZenModeEnabled;
+    // const [viewModeEnabled, setViewModeEnabled] = useState<boolean>(initialData.readOnly);
+    // apiBridge.setViewModeEnabled = setViewModeEnabled;
+    // const [gridModeEnabled, setGridModeEnabled] = useState<boolean>(initialData.gridMode);
+    // apiBridge.setGridModeEnabled = setGridModeEnabled;
+    // const [zenModeEnabled, setZenModeEnabled] = useState<boolean>(initialData.zenMode);
+    // apiBridge.setZenModeEnabled = setZenModeEnabled;
 
 
     return (
@@ -359,9 +358,9 @@ export const App = (): JSX.Element => {
                     console.debug("scene changed");
                     onDrawingChange(elements, state);
                 }}
-                viewModeEnabled={viewModeEnabled}
-                zenModeEnabled={zenModeEnabled}
-                gridModeEnabled={gridModeEnabled}
+                // viewModeEnabled={viewModeEnabled}
+                // zenModeEnabled={zenModeEnabled}
+                // gridModeEnabled={gridModeEnabled}
                 theme={theme}
                 UIOptions={{
                     canvasActions: {},
