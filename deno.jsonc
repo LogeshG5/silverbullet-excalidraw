@@ -1,12 +1,26 @@
 {
   "tasks": {
+    "build_editor": "cd editor; deno run build",
     "build": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
     "watch": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -w -c deno.jsonc excalidraw.plug.yaml"
   },
-  // "importMap": "import_map.json"
+  "lint": {
+    "rules": {
+      "exclude": [
+        "no-explicit-any"
+      ]
+    }
+  },
+  "fmt": {
+    "exclude": [
+      "*.md",
+      "**/*.md",
+      "*.plug.js"
+    ]
+  },
   "imports": {
-    "@silverbulletmd/silverbullet": "jsr:@silverbulletmd/silverbullet@^0.10.1",
+    "@silverbulletmd/silverbullet": "jsr:@silverbulletmd/silverbullet@^0.10.4",
     "handlebars": "https://esm.sh/handlebars",
-    "$sb/": "https://deno.land/x/silverbullet@0.10.1/plug-api/"
+    "$sb/": "https://deno.land/x/silverbullet@0.10.4/plug-api/"
   }
 }

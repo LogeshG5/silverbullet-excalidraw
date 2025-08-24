@@ -1,0 +1,49 @@
+name: Publish
+on:
+  push:
+    branches: main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23
+
+      - name: Install dependencies
+        run: |
+          cd editor
+          npm install
+
+      - name: Build editor
+        run: "deno task build_editor"
+
+      - name: Build step
+        run: "deno task build"
+
+      - name: Update release tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: "edge"
+          force_push_tag: true
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: false
+          tag_name: edge
+          body: Automated build from commit ${{ github.sha }}
+          files: |
+            formatter.plug.js

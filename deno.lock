@@ -1,15 +1,29 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
-    "jsr:@silverbulletmd/silverbullet@~0.10.1": "0.10.1",
+    "jsr:@silverbulletmd/silverbullet@~0.10.4": "0.10.4",
+    "npm:js-yaml@4.1.0": "4.1.0",
     "npm:plantuml-encoder@*": "1.4.0"
   },
   "jsr": {
-    "@silverbulletmd/silverbullet@0.10.1": {
-      "integrity": "de416e75cb6c209cc6952baf7cc553c76588113a06da9f84e467bb7d3ea79fd7"
+    "@silverbulletmd/silverbullet@0.10.4": {
+      "integrity": "021c53f3ad82b5e05247517ae90a458e00c6b8d95826b12454da0c956fff4c12",
+      "dependencies": [
+        "npm:js-yaml"
+      ]
     }
   },
   "npm": {
+    "argparse@2.0.1": {
+      "integrity": "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q=="
+    },
+    "js-yaml@4.1.0": {
+      "integrity": "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==",
+      "dependencies": [
+        "argparse"
+      ],
+      "bin": true
+    },
     "plantuml-encoder@1.4.0": {
       "integrity": "sha512-sxMwpDw/ySY1WB2CE3+IdMuEcWibJ72DDOsXLkSmEaSzwEUaYBT6DWgOfBiHGCux4q433X6+OEFWjlVqp7gL6g=="
     }
@@ -179,11 +193,26 @@
     "https://deno.land/x/silverbullet@0.10.4/lib/proxy_fetch.ts": "831d98cf7f9ada653fc958f52ad367d8511e2634400c29e1fe9d6babd230c0bf",
     "https://deno.land/x/silverbullet@0.10.4/plug-api/lib/tree.ts": "48f1080ba0e7e2545b64524328bf2673830bf6ccee37fc97286644387536e0cd",
     "https://deno.land/x/silverbullet@0.10.4/plug-api/types.ts": "2656ea5e261ba2d7bf685580c823c2bc87142a0139b655ff794c3b89ffd7cf62",
-    "https://deno.land/x/silverbullet@0.10.4/web/change.ts": "bc3204e4f34f86edd11b0fcf3fdfc1e8599cb08ca4eebe7f22451195b74440ef"
+    "https://deno.land/x/silverbullet@0.10.4/web/change.ts": "bc3204e4f34f86edd11b0fcf3fdfc1e8599cb08ca4eebe7f22451195b74440ef",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/asset_bundle/bundle.ts": "5cebb61d5ec523c9d2d8b222516ed3593d40601834c3c7d2aa2b48dad00986b1",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/crypto.ts": "62a2fa4fa5656de53856fcaf70f8e1ec561fc949d26d34168372d7963a727886",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/data/kv_primitives.ts": "d8e5759d241321885134ce4132bc61b33f0ba3bfe6ce271633a4bcc2f4e12270",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/manifest.ts": "2628716fffdff63e3aa8462c3b68928b70f686e2bbe8ff5bd41d057773875e63",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/event.ts": "da055088f3d1d93f31aadd7e16a97061033fdba5807609f3838280352dbbc15e",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/manifest_cache.ts": "c6eaed062ade506ed98a0fa3686f161f58ff839e939f0aa536a371dabd43ca8f",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/namespace.ts": "0a870e11ffefcf9c5fe9e8d11d5ed07dcd19bdd28c4289f96f8bcf95ec44baf2",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/plug.ts": "d3470c6b2040c7e94576f8685a37ca1553ab5ad95760d9566f3c336cb97eee9d",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/protocol.ts": "953341d218c74d662b549e328551033e303ae196a6b27f464b5b394fa7fb1940",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/sandboxes/sandbox.ts": "cc46432492871bf96279050449455b32cf435bef1abc0a1fccc1d87f34143e8e",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/system.ts": "5b99c8b793edc4de0039dbc8c0532119ec346150a8e129b1fe229361246d59a2",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/types.ts": "e4decd11d40797161b4fed67cc432f370ceb159b4680c57dde97e6300ea0abfb",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/worker_runtime.ts": "6f16899c0a3d2525c4bf3f881463bce2d7f2b8b55f072fd74ae0f621ba74fea0",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/lib/proxy_fetch.ts": "831d98cf7f9ada653fc958f52ad367d8511e2634400c29e1fe9d6babd230c0bf",
+    "https://deno.land/x/silverbullet@2.0.0-pre4/type/datastore.ts": "43ac83561844fc5224bd2d5c6c2a92a2cdda6688d29b798c624e3c90bca7ab9d"
   },
   "workspace": {
     "dependencies": [
-      "jsr:@silverbulletmd/silverbullet@~0.10.1"
+      "jsr:@silverbulletmd/silverbullet@~0.10.4"
     ]
   }
 }

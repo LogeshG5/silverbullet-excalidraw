@@ -31,7 +31,7 @@ export async function openExcalidrawEditor(): Promise<{
   html: string;
   script: string;
 }> {
-  const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
+  const exhtml = await asset.readAsset("excalidraw", "editor/public/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const diagramPath = await editor.getCurrentPage();
@@ -49,7 +49,7 @@ export async function openExcalidrawEditor(): Promise<{
 }
 
 export async function openFullScreenEditor(diagramPath: string): Promise<void> {
-  const exhtml = await asset.readAsset("excalidraw", "assets/index.html");
+  const exhtml = await asset.readAsset("excalidraw", "editor/public/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const js = `
@@ -150,7 +150,6 @@ async function createDiagram(diagramType: DiagramType): Promise<void | false> {
   const lastSlash = pageName.lastIndexOf("/");
   const directory = lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
   const filePath = `${directory}/${diagramName}`;
-
   // Ask before overwriting
   const fileExists = await space.fileExists(filePath);
   if (fileExists) {
@@ -175,21 +174,21 @@ height: 500
 \`\`\``;
     await editor.replaceRange(from, selection.to, codeBlock);
   }
-  else if (diagramType==="Attachment") {
+  else if (diagramType === "Attachment") {
     const link = `![${diagramName}](${diagramName})`;
     await editor.replaceRange(from, selection.to, link);
 
     // open file in editor
     await openFullScreenEditor(filePath);
-  } 
+  }
 }
 
 
-export async function createDiagramAsWidget(): Promise<void | false> { 
+export async function createDiagramAsWidget(): Promise<void | false> {
   createDiagram("Widget");
 }
 
- 
+
 export async function createDiagramAsAttachment(): Promise<void | false> {
   createDiagram("Attachment");
 }
@@ -233,7 +232,7 @@ export async function showWidget(
                 <div id="root"></div>
               </body>
               </html>`;
-  
+
   const js = ` ${exjs};
               window.diagramPath = "${url}";
               window.diagramMode = "embed";
