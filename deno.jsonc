@@ -1,6 +1,5 @@
 {
   "tasks": {
-    "build_editor": "cd editor; deno run build",
     "build": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
     "watch": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -w -c deno.jsonc excalidraw.plug.yaml"
   },
