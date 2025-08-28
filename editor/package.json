@@ -6,25 +6,19 @@
   "keywords": [],
   "license": "MIT",
   "dependencies": {
-    "@excalidraw/excalidraw": "^0.17.6",
-    "@types/jest": "^29.0.0",
-    "@types/node": "^22.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "awesome-debounce-promise": "^2.1.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.9.5"
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "@excalidraw/excalidraw": "*",
+    "browser-fs-access": "0.29.1"
   },
+
   "devDependencies": {
-    "@types/pako": "^2.0.0",
-    "cross-env": "^7.0.2",
-    "customize-cra": "^1.0.0",
-    "eslint": "^8.29.0",
-    "eslint-config-react-app": "^7.0.1",
-    "react-app-rewired": "^2.2.1"
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "vite": "5.0.12",
+    "typescript": "^5"
   },
+
   "eslintConfig": {
     "extends": [
       "react-app"
@@ -34,10 +28,14 @@
     }
   },
   "scripts": {
-    "start": "PORT=3006 BROWSER=none cross-env NODE_ENV=development react-app-rewired start",
-    "build": "cross-env BUILD_PATH='../assets' react-app-rewired build",
-    "test": "react-app-rewired test --env=jsdom"
+    "start": "vite",
+    "build-dev": "vite build",
+    "build": "esbuild src/index.tsx --minify --bundle --outfile=../assets/editor.js --conditions=production --external:*.woff2  --external:@excalidraw/mermaid-to-excalidraw --format=iife --metafile=meta.json",
+    "preview": "vite preview --port 5002",
+    "build:preview": "yarn build && yarn preview",
+    "build:packages": "yarn --cwd ../../ build:packages"
   },
+
   "browserslist": {
     "production": [
       ">0.2%",

@@ -9,10 +9,12 @@ import {
     MainMenu,
     THEME
 } from "@excalidraw/excalidraw";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { RestoredDataState } from "@excalidraw/excalidraw/types/data/restore";
-import { Theme } from "@excalidraw/excalidraw/types/element/types";
-import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
+// import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { RestoredDataState } from "@excalidraw/excalidraw/data/restore";
+import { Theme } from "@excalidraw/excalidraw/element/types";
+import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
+import "@excalidraw/excalidraw/index.css";
 
 declare global {
     const syscall: (name: string, ...args: any[]) => Promise<any>;
@@ -74,14 +76,14 @@ class ExcalidrawApiBridge {
     // private _setGridModeEnabled: React.Dispatch<boolean> | null = null;
     // private _setZenModeEnabled: React.Dispatch<boolean> | null = null;
     private currentSceneVersion = getSceneVersion([]);
-    debouncedContinuousSaving: (elements: any[], appState: object) => Promise<void>;
+    // debouncedContinuousSaving: (elements: any[], appState: object) => Promise<void>;
 
     constructor(excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>) {
         this.excalidrawRef = excalidrawRef;
-        this.debouncedContinuousSaving = AwesomeDebouncePromise(
-            this._continuousSaving,
-            initialData.debounceAutoSaveInMs
-        );
+        // this.debouncedContinuousSaving = AwesomeDebouncePromise(
+        //     this._continuousSaving,
+        //     initialData.debounceAutoSaveInMs
+        // );
     }
 
     set setTheme(value: React.Dispatch<Theme>) {
@@ -326,7 +328,7 @@ export const App = (): JSX.Element => {
         };
     } catch (e) {
         onDrawingChange = async (elements: any, state: object): Promise<void> => {
-            await apiBridge!.debouncedContinuousSaving(elements, state);
+            // await apiBridge!.debouncedContinuousSaving(elements, state);
         };
     }
 
