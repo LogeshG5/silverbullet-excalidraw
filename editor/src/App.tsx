@@ -1,19 +1,22 @@
 import React, { useState, useRef, useCallback } from "react";
+import type { RefObject, ReactElement } from "react";
 import {
     Excalidraw,
     exportToBlob,
     exportToSvg,
-    getSceneVersion,
     loadFromBlob,
     serializeAsJSON,
     MainMenu,
     THEME
 } from "@excalidraw/excalidraw";
-import { RestoredDataState } from "@excalidraw/excalidraw/data/restore";
-import { Theme } from "@excalidraw/excalidraw/element/types";
-import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
-import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
+import type { RestoredDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/data/restore";
+import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
+import type * as TExcalidraw from "@excalidraw/excalidraw";
+import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+// import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
 import "@excalidraw/excalidraw/index.css";
+// import "@excalidraw/excalidraw/dist/prod/index.css";
+// import "@excalidraw/excalidraw/dist/excalidraw.min.css";
 
 declare global {
     const syscall: (name: string, ...args: any[]) => Promise<any>;
@@ -97,16 +100,16 @@ export const debounce = <T extends any[]>(
 };
 
 class ExcalidrawApiBridge {
-    private readonly excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>;
+    private readonly excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>;
     private continuousSavingEnabled = true;
     private _setTheme: React.Dispatch<Theme> | null = null;
     // private _setViewModeEnabled: React.Dispatch<boolean> | null = null;
     // private _setGridModeEnabled: React.Dispatch<boolean> | null = null;
     // private _setZenModeEnabled: React.Dispatch<boolean> | null = null;
-    private currentSceneVersion = getSceneVersion([]);
-    debouncedContinuousSaving: (elements: any[], appState: object) => Promise<void>;
+    // private currentSceneVersion = getSceneVersion([]);
+    debouncedContinuousSaving: (elements: any[], appState: object) => void;
 
-    constructor(excalidrawRef: React.MutableRefObject<ExcalidrawImperativeAPI | null>) {
+    constructor(excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>) {
         this.excalidrawRef = excalidrawRef;
         this.debouncedContinuousSaving = debounce(
             this._continuousSaving,
@@ -201,6 +204,7 @@ class ExcalidrawApiBridge {
                 });
                 break;
             case "excalidraw":
+                console.log("space.writeFile", window.diagramPath, this.saveAsJson());
                 syscaller("space.writeFile", window.diagramPath, this.saveAsJson());
                 break;
             default:
@@ -211,12 +215,12 @@ class ExcalidrawApiBridge {
     private _continuousSaving = async (elements: any[], _: object): Promise<void> => {
         if (!this.continuousSavingEnabled) return;
         console.debug("debounced scene changed");
-        const newSceneVersion = getSceneVersion(elements);
-        if (this.currentSceneVersion !== newSceneVersion) {
-            this.currentSceneVersion = newSceneVersion;
-            this.saveAsJson();
-            this.handleContinuousUpdate();
-        }
+        // const newSceneVersion = getSceneVersion(elements);
+        // if (this.currentSceneVersion !== newSceneVersion) {
+        //     this.currentSceneVersion = newSceneVersion;
+        this.saveAsJson();
+        this.handleContinuousUpdate();
+        // }
     };
 
     handleLoadFromFile = (message: { blob: Blob; theme: Theme }): void => {
@@ -225,12 +229,12 @@ class ExcalidrawApiBridge {
         loadFromBlob(message.blob, null, null)
             .then((restoredState: RestoredDataState | undefined) => {
                 if (!restoredState) return;
-                const updateSceneVersion = getSceneVersion(restoredState.elements);
-                if (this.currentSceneVersion !== updateSceneVersion) {
-                    this.currentSceneVersion = updateSceneVersion;
-                    console.debug("Call updateApp and scene");
-                    this.updateApp({ elements: restoredState.elements || [], appState: {} });
-                }
+                // const updateSceneVersion = getSceneVersion(restoredState.elements);
+                // if (this.currentSceneVersion !== updateSceneVersion) {
+                //     this.currentSceneVersion = updateSceneVersion;
+                console.debug("Call updateApp and scene");
+                this.updateApp({ elements: restoredState.elements || [], appState: {} });
+                // }
             })
             .catch((error: unknown) => {
                 const errorStr = error instanceof Error ? error.toString() : JSON.stringify(error);
@@ -242,7 +246,7 @@ class ExcalidrawApiBridge {
 
     exit = () => {
         this.handleContinuousUpdate();
-        syscaller("sync.scheduleSpaceSync").then(() => {
+        syscaller("sync.performSpaceSync").then(() => {
             syscaller("editor.reloadUI");
             syscaller("editor.hidePanel", "modal");
         })
@@ -265,7 +269,7 @@ class ExcalidrawApiBridge {
 
 let apiBridge: ExcalidrawApiBridge | null = null;
 
-export const MaxOrCloseButton = (): JSX.Element => {
+export const MaxOrCloseButton = (): ReactElement => {
     const close = (
         <button
             onClick={() => apiBridge!.exit()}
@@ -337,7 +341,7 @@ function getExtension(filename: string): string {
     return parts.length > 1 ? parts.pop()! : "";
 }
 
-export const App = (): JSX.Element => {
+export const App = (): ReactElement => {
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     apiBridge = new ExcalidrawApiBridge(excalidrawApiRef);
 
@@ -362,11 +366,26 @@ export const App = (): JSX.Element => {
 
     const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
-            const fileExtension = getExtension(window.diagramPath);
-            const blob = getBlob(data, fileExtension);
-            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
-        });
+        console.log("Going to read file ", window.diagramPath);
+        console.log("Going to read file ", window.diagramPath);
+        console.log("Going to read file ", window.diagramPath);
+        console.log("Going to read file ", window.diagramPath);
+        try {
+
+            syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
+                const fileExtension = getExtension(window.diagramPath);
+                const blob = getBlob(data, fileExtension);
+                console.log("Read file ", window.diagramPath);
+                console.log("Read file ", window.diagramPath);
+                console.log("Read file ", window.diagramPath);
+                console.log("Read file ", window.diagramPath);
+                console.log("Read file ", window.diagramPath);
+                console.log("Read file ", window.diagramPath);
+                apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
+            });
+        } catch (e) {
+            console.log("ERROR", e);
+        }
     }, []);
 
     const [theme, setTheme] = useState<Theme>(initialData.theme);

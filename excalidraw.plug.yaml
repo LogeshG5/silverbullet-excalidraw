@@ -3,6 +3,7 @@ version: 0.1
 assets:
   - "assets/editor.js"
   - "editor/public/index.html"
+  - "editor/public/widget.html"
 imports:
   - https://get.silverbullet.md/global.plug.json
 requiredPermissions:

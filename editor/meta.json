@@ -5338,7 +5338,7 @@
       ]
     },
     "src/App.tsx": {
-      "bytes": 14256,
+      "bytes": 15329,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5349,26 +5349,6 @@
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
           "kind": "import-statement",
           "original": "@excalidraw/excalidraw"
-        },
-        {
-          "path": "@excalidraw/excalidraw/data/restore",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "@excalidraw/excalidraw/element/types",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "@excalidraw/excalidraw/types",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "@excalidraw/excalidraw/dist/types/excalidraw/types",
-          "kind": "import-statement",
-          "external": true
         },
         {
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.css",
@@ -5633,7 +5613,7 @@
           "bytesInOutput": 46079
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/chunk-FX7ZIABN.js": {
-          "bytesInOutput": 443444
+          "bytesInOutput": 443404
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/chunk-6U3AYISY.js": {
           "bytesInOutput": 22389
@@ -5714,7 +5694,7 @@
           "bytesInOutput": 55184
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/hu-HU-A5ZG7DT2.js": {
-          "bytesInOutput": 20657
+          "bytesInOutput": 20653
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/id-ID-SAP4L64H.js": {
           "bytesInOutput": 19990
@@ -5834,7 +5814,7 @@
           "bytesInOutput": 0
         },
         "src/App.tsx": {
-          "bytesInOutput": 4923
+          "bytesInOutput": 5314
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.js": {
           "bytesInOutput": 494836
@@ -6071,7 +6051,7 @@
           "bytesInOutput": 0
         }
       },
-      "bytes": 4921754
+      "bytes": 4922101
     },
     "../assets/editor.css": {
       "imports": [

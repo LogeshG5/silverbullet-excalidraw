@@ -199,6 +199,7 @@ export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
+  const exhtml = await asset.readAsset("excalidraw", "editor/public/widget.html");
 
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
   const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
@@ -226,6 +227,7 @@ export async function showWidget(
                     width: 100vw;
                     height: 100vh;
                   }
+
                 </style>
               </head>
               <body>
@@ -239,7 +241,7 @@ export async function showWidget(
               window.excalidrawTheme = "${theme}";
               `;
   return {
-    html: html,
+    html: exhtml,
     script: js,
   };
 }
