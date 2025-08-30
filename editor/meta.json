@@ -87,7 +87,7 @@
       "format": "cjs"
     },
     "src/styles.css": {
-      "bytes": 648,
+      "bytes": 721,
       "imports": []
     },
     "node_modules/@excalidraw/excalidraw/dist/prod/chunk-SQ5PDB2P.js": {
@@ -6113,13 +6113,13 @@
       ],
       "inputs": {
         "src/styles.css": {
-          "bytesInOutput": 340
+          "bytesInOutput": 391
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 144663
         }
       },
-      "bytes": 145021
+      "bytes": 145072
     }
   }
 }

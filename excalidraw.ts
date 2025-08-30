@@ -31,27 +31,29 @@ export async function openExcalidrawEditor(): Promise<{
   html: string;
   script: string;
 }> {
-  const exhtml = await asset.readAsset("excalidraw", "editor/public/index.html");
-  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const diagramPath = await editor.getCurrentPage();
+
+  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
+  const css = await asset.readAsset("excalidraw", "assets/editor.css");
+  const html = `<style>${css}</style> <div id="root"></div>`;
   const js = `
     ${exjs};
     window.diagramPath = "${diagramPath}";
     window.diagramMode = "fullscreen";
     window.excalidrawTheme = "${spaceTheme}";
   `;
-  console.log("---------- Hit openExcalidrawEditor");
   return {
-    html: exhtml,
+    html: html,
     script: js,
   };
 }
 
 export async function openFullScreenEditor(diagramPath: string): Promise<void> {
-  const exhtml = await asset.readAsset("excalidraw", "editor/public/index.html");
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
+  const css = await asset.readAsset("excalidraw", "assets/editor.css");
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
+  const html = `<style>${css}</style> <div id="root"></div>`;
   const js = `
      ${exjs};
      window.diagramPath = "${diagramPath}";
@@ -61,7 +63,7 @@ export async function openFullScreenEditor(diagramPath: string): Promise<void> {
   await editor.showPanel(
     "modal",
     1,
-    exhtml,
+    html,
     js
   );
 }
@@ -199,7 +201,7 @@ export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
   const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const exhtml = await asset.readAsset("excalidraw", "editor/public/widget.html");
+  const css = await asset.readAsset("excalidraw", "assets/editor.css");
 
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
   const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
@@ -216,24 +218,8 @@ export async function showWidget(
     return { html: `<pre>File does not exist</pre>`, script: "" };
   }
 
-  const html = `<head>
-                <style>
-                  body {
-                    padding: 0;
-                    margin: 0;
-                    height: ${height};
-                  }
-                  .excalidraw-wrapper {
-                    width: 100vw;
-                    height: 100vh;
-                  }
-
-                </style>
-              </head>
-              <body>
-                <div id="root"></div>
-              </body>
-              </html>`;
+  const html = `<style>${css}</style>
+                <div id="root" class="excalidraw-widget"></div>`;
 
   const js = ` ${exjs};
               window.diagramPath = "${url}";
@@ -241,7 +227,7 @@ export async function showWidget(
               window.excalidrawTheme = "${theme}";
               `;
   return {
-    html: exhtml,
+    html: html,
     script: js,
   };
 }

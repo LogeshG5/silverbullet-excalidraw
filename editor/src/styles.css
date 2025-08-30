@@ -2,6 +2,11 @@ body {
     padding: 0;
     margin: 0;
 }
+.excalidraw-widget {
+    padding: 0;
+    margin: 0;
+    height: 500px;
+}
 .excalidraw-wrapper {
     width: 100vw;
     height: 100vh;
