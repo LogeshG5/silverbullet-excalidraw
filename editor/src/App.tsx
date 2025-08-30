@@ -310,7 +310,7 @@ export const MaxOrCloseButton = (): ReactElement => {
         </button>
     );
 
-    return window.diagramMode === "embed" ? fullscreen : close;
+    return window.diagramMode === "widget" ? fullscreen : close;
 };
 
 

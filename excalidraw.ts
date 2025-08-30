@@ -8,33 +8,31 @@ import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
 type DiagramType = "Widget" | "Attachment";
 
-async function getHtmlJs(path: string, type: string = 'fullscreen'): Promise<{
-  html: string;
-  script: string;
-}> {
+async function getHtmlJs(
+  path: string,
+  type: "fullscreen" | "widget" = "fullscreen"
+): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-
-  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
+  const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
-  let html = "";
-  let js = "";
-  if (type === "widget") {
-    html = `<style>${css}</style> <div id="root" class="excalidraw-widget"></div>`;
-    js = ` ${exjs};
-      window.diagramPath = "${path}";
-      window.excalidrawTheme = "${spaceTheme}";
-      window.diagramMode = "embed";
+
+  const widgetHtml = `<style>${css}</style><div id="root" class="excalidraw-widget"></div>`;
+  const fullscreenHtml = `<style>${css}</style><div id="root"></div>`;
+
+  const baseScript = `
+    ${js};
+    window.diagramPath = "${path}";
+    window.excalidrawTheme = "${spaceTheme}";
   `;
-  } else {
-    html = `<style>${css}</style> <div id="root"></div>`;
-    js = ` ${exjs};
-      window.diagramPath = "${path}";
-      window.excalidrawTheme = "${spaceTheme}";
+
+  const widgetScript = `
+    ${baseScript}
+    window.diagramMode = "widget";
   `;
-  }
+
   return {
-    html: html,
-    script: js,
+    html: type === "widget" ? widgetHtml : fullscreenHtml,
+    script: type === "widget" ? widgetScript : baseScript,
   };
 }
 
@@ -83,8 +81,7 @@ Opens the editor
 */
 export async function editDiagram(): Promise<void> {
   const pageName = await editor.getCurrentPage();
-  const lastSlash = pageName.lastIndexOf("/");
-  const directory = lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
+  const directory = getCurrentDirectory(pageName);
   const text = await editor.getText();
   const matches = getDiagrams(text);
 
@@ -126,72 +123,86 @@ Updates the code editor by adding a
 async function createDiagram(diagramType: DiagramType): Promise<void | false> {
   const text = await editor.getText();
   const selection = await editor.getSelection();
-  const from = selection.from;
-  const selectedText = text.slice(from, selection.to);
+  const { from, to } = selection;
+  const selectedText = text.slice(from, to);
 
-  let diagramName = selectedText;
-  if (diagramName.length === 0) {
-    // no text was selected in editor, prompt user
-    diagramName = await editor.prompt("Enter a diagram name: ", "");
-  } else {
-    diagramName = await editor.prompt("Enter a diagram name: ", diagramName);
-  }
-
-  const ext = getFileExtension(diagramName);
-
-  if (diagramType === "Widget") {
-    if (ext !== "excalidraw") {
-      diagramName = `${diagramName}.excalidraw`;
-    }
-  }
-  else if (diagramType === "Attachment") {
-    if (ext !== "svg" && ext !== "png") {
-      diagramName = `${diagramName}.svg`;
-      await editor.flashNotification(
-        "No extenstion provided, svg chosen",
-        "info"
-      );
-    }
-  }
-
-  const pageName = await editor.getCurrentPage();
-  const lastSlash = pageName.lastIndexOf("/");
-  const directory = lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
-  const filePath = `${directory}/${diagramName}`;
-  // Ask before overwriting
-  const fileExists = await space.fileExists(filePath);
-  if (fileExists) {
-    const overwrite = await editor.confirm(
-      "File already exist! Do you want to overwrite?"
-    );
-    if (!overwrite) {
-      return false;
-    }
-  }
-
-  const fileContent = new TextEncoder().encode(
-    `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
+  // Ask for diagram name (default: selected text or empty)
+  let diagramName = await editor.prompt(
+    "Enter a diagram name:",
+    selectedText || ""
   );
-  await space.writeFile(filePath, fileContent);
+  if (!diagramName) return false; // user cancelled
+
+  diagramName = ensureExtension(diagramName, diagramType);
+
+  const directory = getCurrentDirectory(await editor.getCurrentPage());
+  const filePath = `${directory}/${diagramName}`;
+
+  if (await fileAlreadyExists(filePath)) {
+    return false;
+  }
+
+  await writeEmptyExcalidrawFile(filePath);
 
   if (diagramType === "Widget") {
-    // insert code block
-
-    const codeBlock = `\`\`\`excalidraw
-url:${filePath}
-height: 500
-\`\`\``;
-    await editor.replaceRange(from, selection.to, codeBlock);
-  }
-  else if (diagramType === "Attachment") {
-    const link = `![${diagramName}](${filePath})`;
-    await editor.replaceRange(from, selection.to, link);
-
-    // open file in editor
-    await openFullScreenEditor(filePath);
+    await insertExcalidrawBlock(from, to, filePath);
+  } else {
+    await insertAttachment(from, to, diagramName, filePath);
   }
 }
 
+
+function ensureExtension(name: string, type: DiagramType): string {
+  const ext = getFileExtension(name);
+
+  if (type === "Widget") {
+    return ext === "excalidraw" ? name : `${name}.excalidraw`;
+  }
+
+  if (type === "Attachment") {
+    if (ext === "svg" || ext === "png") return name;
+    editor.flashNotification("No extension provided, svg chosen", "info");
+    return `${name}.svg`;
+  }
+
+  return name;
+}
+
+function getCurrentDirectory(pageName: string): string {
+  const lastSlash = pageName.lastIndexOf("/");
+  return lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
+}
+
+async function fileAlreadyExists(filePath: string): Promise<boolean> {
+  if (await space.fileExists(filePath)) {
+    const overwrite = await editor.confirm(
+      "File already exists! Do you want to overwrite?"
+    );
+    return !overwrite;
+  }
+  return false;
+}
+
+async function writeEmptyExcalidrawFile(filePath: string): Promise<void> {
+  const content = new TextEncoder().encode(
+    `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
+  );
+  await space.writeFile(filePath, content);
+}
+
+async function insertExcalidrawBlock(from: number, to: number, filePath: string): Promise<void> {
+  const block = `\`\`\`excalidraw
+url:${filePath}
+height: 500
+\`\`\``;
+  await editor.replaceRange(from, to, block);
+}
+
+async function insertAttachment(from: number, to: number, name: string, filePath: string): Promise<void> {
+  const link = `![${name}](${filePath})`;
+  await editor.replaceRange(from, to, link);
+  await openFullScreenEditor(filePath);
+}
 
 export async function createDiagramAsWidget(): Promise<void | false> {
   createDiagram("Widget");
