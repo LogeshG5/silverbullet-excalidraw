@@ -8,6 +8,54 @@ import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
 type DiagramType = "Widget" | "Attachment";
 
+async function getHtmlJs(path: string, type: string = 'fullscreen'): Promise<{
+  html: string;
+  script: string;
+}> {
+  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
+
+  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
+  const css = await asset.readAsset("excalidraw", "assets/editor.css");
+  let html = "";
+  let js = "";
+  if (type === "widget") {
+    html = `<style>${css}</style> <div id="root" class="excalidraw-widget"></div>`;
+    js = ` ${exjs};
+      window.diagramPath = "${path}";
+      window.excalidrawTheme = "${spaceTheme}";
+      window.diagramMode = "embed";
+  `;
+  } else {
+    html = `<style>${css}</style> <div id="root"></div>`;
+    js = ` ${exjs};
+      window.diagramPath = "${path}";
+      window.excalidrawTheme = "${spaceTheme}";
+  `;
+  }
+  return {
+    html: html,
+    script: js,
+  };
+}
+
+export async function openExcalidrawEditor(): Promise<{
+  html: string;
+  script: string;
+}> {
+  const path = await editor.getCurrentPage();
+  return getHtmlJs(path);
+}
+
+export async function openFullScreenEditor(diagramPath: string): Promise<void> {
+  const assets = await getHtmlJs(diagramPath);
+  await editor.showPanel(
+    "modal",
+    1,
+    assets.html,
+    assets.script
+  );
+}
+
 function getFileExtension(filename: string): string {
   const index = filename.lastIndexOf(".");
   return index !== -1 ? filename.slice(index + 1) : "";
@@ -26,54 +74,12 @@ function getDiagrams(text: string): string[] {
   return matches;
 }
 
-
-export async function openExcalidrawEditor(): Promise<{
-  html: string;
-  script: string;
-}> {
-  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-  const diagramPath = await editor.getCurrentPage();
-
-  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const css = await asset.readAsset("excalidraw", "assets/editor.css");
-  const html = `<style>${css}</style> <div id="root"></div>`;
-  const js = `
-    ${exjs};
-    window.diagramPath = "${diagramPath}";
-    window.diagramMode = "fullscreen";
-    window.excalidrawTheme = "${spaceTheme}";
-  `;
-  return {
-    html: html,
-    script: js,
-  };
-}
-
-export async function openFullScreenEditor(diagramPath: string): Promise<void> {
-  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const css = await asset.readAsset("excalidraw", "assets/editor.css");
-  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-  const html = `<style>${css}</style> <div id="root"></div>`;
-  const js = `
-     ${exjs};
-     window.diagramPath = "${diagramPath}";
-     window.diagramMode = "fullscreen";
-     window.excalidrawTheme = "${spaceTheme}";
-    `;
-  await editor.showPanel(
-    "modal",
-    1,
-    html,
-    js
-  );
-}
-
 /* "Excalidraw: Edit diagram" 
-
+ 
 looks for attached diagrams 
 Prompts the user to select one attachment 
 Opens the editor
-
+ 
 */
 export async function editDiagram(): Promise<void> {
   const pageName = await editor.getCurrentPage();
@@ -104,18 +110,17 @@ export async function editDiagram(): Promise<void> {
     }
     diagramPath = `${selectedDiagram.name}`;
   }
-
-  console.log("diagramPath", diagramPath);
+  await openFullScreenEditor(diagramPath);
 }
 
 /* "Excalidraw: Create diagram" 
-
+ 
 Prompts for a filename
 Creates a diagram file
 Updates the code editor by adding a
   code block -> if the file is .excalidraw
   attachment to the image -> if the file is .png / .svg
-
+ 
 */
 
 async function createDiagram(diagramType: DiagramType): Promise<void | false> {
@@ -202,36 +207,14 @@ export async function createDiagramAsAttachment(): Promise<void | false> {
 export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
-  const exjs = await asset.readAsset("excalidraw", "assets/editor.js");
-  const css = await asset.readAsset("excalidraw", "assets/editor.css");
-
   const urlMatch = widgetContents.match(/url:\s*(.+)/i);
-  const heightMatch = widgetContents.match(/height:\s*(\d+)/i);
-  const themeMatch = widgetContents.match(/theme:\s*(.+)/i);
+  const path = urlMatch ? urlMatch[1].trim() : null;
 
-  const url = urlMatch ? urlMatch[1].trim() : null;
-  const height = (heightMatch ? heightMatch[1].trim() : "500") + "px";
-
-  // use theme specified in code widget, if not use theme of current space
-  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-  const theme = themeMatch ? themeMatch[1].trim() : spaceTheme;
-
-  if (!url || !(await space.fileExists(url))) {
+  if (!path || !(await space.fileExists(path))) {
     return { html: `<pre>File does not exist</pre>`, script: "" };
   }
 
-  const html = `<style>${css}</style>
-                <div id="root" class="excalidraw-widget"></div>`;
-
-  const js = ` ${exjs};
-              window.diagramPath = "${url}";
-              window.diagramMode = "embed";
-              window.excalidrawTheme = "${theme}";
-              `;
-  return {
-    html: html,
-    script: js,
-  };
+  return getHtmlJs(path, 'widget');
 }
 
 export function snippetSlashComplete(): SlashCompletions {
