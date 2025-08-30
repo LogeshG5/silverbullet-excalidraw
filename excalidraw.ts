@@ -77,7 +77,8 @@ Opens the editor
 */
 export async function editDiagram(): Promise<void> {
   const pageName = await editor.getCurrentPage();
-  const directory = pageName.substring(0, pageName.lastIndexOf("/"));
+  const lastSlash = pageName.lastIndexOf("/");
+  const directory = lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
   const text = await editor.getText();
   const matches = getDiagrams(text);
 
@@ -90,7 +91,7 @@ export async function editDiagram(): Promise<void> {
     return;
   }
   if (matches.length === 1) {
-    diagramPath = `${directory}/${matches[0]}`;
+    diagramPath = `${matches[0]}`;
   } else {
     const options = matches.map((model) => ({
       name: model,
@@ -101,10 +102,10 @@ export async function editDiagram(): Promise<void> {
       await editor.flashNotification("No diagram selected!", "error");
       return;
     }
-    diagramPath = `${directory}/${selectedDiagram.name}`;
+    diagramPath = `${selectedDiagram.name}`;
   }
 
-  await openFullScreenEditor(diagramPath);
+  console.log("diagramPath", diagramPath);
 }
 
 /* "Excalidraw: Create diagram" 
@@ -163,12 +164,13 @@ async function createDiagram(diagramType: DiagramType): Promise<void | false> {
     }
   }
 
+  const fileContent = new TextEncoder().encode(
+    `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
+  );
+  await space.writeFile(filePath, fileContent);
+
   if (diagramType === "Widget") {
     // insert code block
-    const fileContent = new TextEncoder().encode(
-      `{"type":"excalidraw","version":2,"elements":[],"appState":{},"files":{}}`
-    );
-    await space.writeFile(filePath, fileContent);
 
     const codeBlock = `\`\`\`excalidraw
 url:${filePath}
@@ -177,7 +179,7 @@ height: 500
     await editor.replaceRange(from, selection.to, codeBlock);
   }
   else if (diagramType === "Attachment") {
-    const link = `![${diagramName}](${diagramName})`;
+    const link = `![${diagramName}](${filePath})`;
     await editor.replaceRange(from, selection.to, link);
 
     // open file in editor
