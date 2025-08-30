@@ -5338,7 +5338,7 @@
       ]
     },
     "src/App.tsx": {
-      "bytes": 15329,
+      "bytes": 14504,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5814,7 +5814,7 @@
           "bytesInOutput": 0
         },
         "src/App.tsx": {
-          "bytesInOutput": 5314
+          "bytesInOutput": 4723
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.js": {
           "bytesInOutput": 494836
@@ -6051,7 +6051,7 @@
           "bytesInOutput": 0
         }
       },
-      "bytes": 4922101
+      "bytes": 4921510
     },
     "../assets/editor.css": {
       "imports": [

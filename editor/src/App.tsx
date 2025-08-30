@@ -204,7 +204,6 @@ class ExcalidrawApiBridge {
                 });
                 break;
             case "excalidraw":
-                console.log("space.writeFile", window.diagramPath, this.saveAsJson());
                 syscaller("space.writeFile", window.diagramPath, this.saveAsJson());
                 break;
             default:
@@ -366,26 +365,11 @@ export const App = (): ReactElement => {
 
     const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        console.log("Going to read file ", window.diagramPath);
-        console.log("Going to read file ", window.diagramPath);
-        console.log("Going to read file ", window.diagramPath);
-        console.log("Going to read file ", window.diagramPath);
-        try {
-
-            syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
-                const fileExtension = getExtension(window.diagramPath);
-                const blob = getBlob(data, fileExtension);
-                console.log("Read file ", window.diagramPath);
-                console.log("Read file ", window.diagramPath);
-                console.log("Read file ", window.diagramPath);
-                console.log("Read file ", window.diagramPath);
-                console.log("Read file ", window.diagramPath);
-                console.log("Read file ", window.diagramPath);
-                apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
-            });
-        } catch (e) {
-            console.log("ERROR", e);
-        }
+        syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
+            const fileExtension = getExtension(window.diagramPath);
+            const blob = getBlob(data, fileExtension);
+            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
+        });
     }, []);
 
     const [theme, setTheme] = useState<Theme>(initialData.theme);
