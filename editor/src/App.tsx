@@ -11,12 +11,8 @@ import {
 } from "@excalidraw/excalidraw";
 import type { RestoredDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/data/restore";
 import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
-import type * as TExcalidraw from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
-// import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
 import "@excalidraw/excalidraw/index.css";
-// import "@excalidraw/excalidraw/dist/prod/index.css";
-// import "@excalidraw/excalidraw/dist/excalidraw.min.css";
 
 declare global {
     const syscall: (name: string, ...args: any[]) => Promise<any>;

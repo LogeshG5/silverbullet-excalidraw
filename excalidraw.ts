@@ -193,7 +193,6 @@ async function writeEmptyExcalidrawFile(filePath: string): Promise<void> {
 async function insertExcalidrawBlock(from: number, to: number, filePath: string): Promise<void> {
   const block = `\`\`\`excalidraw
 url:${filePath}
-height: 500
 \`\`\``;
   await editor.replaceRange(from, to, block);
 }

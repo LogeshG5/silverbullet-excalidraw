@@ -5338,7 +5338,7 @@
       ]
     },
     "src/App.tsx": {
-      "bytes": 14505,
+      "bytes": 14206,
       "imports": [
         {
           "path": "node_modules/react/index.js",
