@@ -1,5 +1,9 @@
 {
   "inputs": {
+    "src/styles.css": {
+      "bytes": 1433,
+      "imports": []
+    },
     "node_modules/react/cjs/react.production.js": {
       "bytes": 16856,
       "imports": [],
@@ -86,9 +90,65 @@
       ],
       "format": "cjs"
     },
-    "src/styles.css": {
-      "bytes": 721,
-      "imports": []
+    "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
+      "bytes": 144689,
+      "imports": [
+        {
+          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"292.4\" height=\"292.4\" viewBox=\"0 0 292 292\"><path d=\"M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z\"/></svg>",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"292.4\" height=\"292.4\" viewBox=\"0 0 292 292\"><path fill=\"%23ced4da\" d=\"M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z\"/></svg>",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "./fonts/Assistant/Assistant-Regular.woff2",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "./fonts/Assistant/Assistant-Medium.woff2",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "./fonts/Assistant/Assistant-SemiBold.woff2",
+          "kind": "url-token",
+          "external": true
+        },
+        {
+          "path": "./fonts/Assistant/Assistant-Bold.woff2",
+          "kind": "url-token",
+          "external": true
+        }
+      ]
     },
     "node_modules/@excalidraw/excalidraw/dist/prod/chunk-SQ5PDB2P.js": {
       "bytes": 1572,
@@ -5277,94 +5337,29 @@
       ],
       "format": "esm"
     },
-    "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
-      "bytes": 144689,
-      "imports": [
-        {
-          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGAQYcAP3uCTZhw1gGGYhAGBZIA/nYDCgBDAm9BGDWAAJyRCgLaBCAAgXwixzAS0pgAAAABJRU5ErkJggg==",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"292.4\" height=\"292.4\" viewBox=\"0 0 292 292\"><path d=\"M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z\"/></svg>",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"292.4\" height=\"292.4\" viewBox=\"0 0 292 292\"><path fill=\"%23ced4da\" d=\"M287 197L159 69c-4-3-8-5-13-5s-9 2-13 5L5 197c-3 4-5 8-5 13s2 9 5 13c4 4 8 5 13 5h256c5 0 9-1 13-5s5-8 5-13-1-9-5-13z\"/></svg>",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "./fonts/Assistant/Assistant-Regular.woff2",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "./fonts/Assistant/Assistant-Medium.woff2",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "./fonts/Assistant/Assistant-SemiBold.woff2",
-          "kind": "url-token",
-          "external": true
-        },
-        {
-          "path": "./fonts/Assistant/Assistant-Bold.woff2",
-          "kind": "url-token",
-          "external": true
-        }
-      ]
+    "src/helpers.ts": {
+      "bytes": 1322,
+      "imports": [],
+      "format": "esm"
     },
-    "src/App.tsx": {
-      "bytes": 14206,
+    "src/ExcalidrawAPI.ts": {
+      "bytes": 4274,
       "imports": [
-        {
-          "path": "node_modules/react/index.js",
-          "kind": "import-statement",
-          "original": "react"
-        },
         {
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
           "kind": "import-statement",
           "original": "@excalidraw/excalidraw"
         },
         {
-          "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.css",
+          "path": "src/helpers.ts",
           "kind": "import-statement",
-          "original": "@excalidraw/excalidraw/index.css"
-        },
-        {
-          "path": "node_modules/react/jsx-runtime.js",
-          "kind": "import-statement",
-          "original": "react/jsx-runtime"
+          "original": "./helpers"
         }
       ],
       "format": "esm"
     },
-    "src/index.tsx": {
-      "bytes": 404,
+    "src/App.tsx": {
+      "bytes": 3511,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5375,6 +5370,57 @@
           "path": "node_modules/react-dom/client.js",
           "kind": "import-statement",
           "original": "react-dom/client"
+        },
+        {
+          "path": "@excalidraw/excalidraw/dist/types/excalidraw/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "@excalidraw/excalidraw/dist/types/excalidraw/element/types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.css",
+          "kind": "import-statement",
+          "original": "@excalidraw/excalidraw/index.css"
+        },
+        {
+          "path": "src/ExcalidrawAPI.ts",
+          "kind": "import-statement",
+          "original": "./ExcalidrawAPI"
+        },
+        {
+          "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
+          "kind": "import-statement",
+          "original": "@excalidraw/excalidraw"
+        },
+        {
+          "path": "src/helpers.ts",
+          "kind": "import-statement",
+          "original": "./helpers"
+        },
+        {
+          "path": "node_modules/react/jsx-runtime.js",
+          "kind": "import-statement",
+          "original": "react/jsx-runtime"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/index.tsx": {
+      "bytes": 870,
+      "imports": [
+        {
+          "path": "react",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "react-dom/client",
+          "kind": "import-statement",
+          "external": true
         },
         {
           "path": "src/styles.css",
@@ -5807,14 +5853,14 @@
         "node_modules/canvas-roundrect-polyfill/roundRect.js": {
           "bytesInOutput": 2919
         },
-        "src/index.tsx": {
-          "bytesInOutput": 138
-        },
         "src/styles.css": {
           "bytesInOutput": 0
         },
         "src/App.tsx": {
-          "bytesInOutput": 4724
+          "bytesInOutput": 1289
+        },
+        "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
+          "bytesInOutput": 0
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.js": {
           "bytesInOutput": 494836
@@ -6047,11 +6093,17 @@
         "node_modules/@excalidraw/laser-pointer/dist/esm.js": {
           "bytesInOutput": 5085
         },
-        "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
-          "bytesInOutput": 0
+        "src/helpers.ts": {
+          "bytesInOutput": 564
+        },
+        "src/ExcalidrawAPI.ts": {
+          "bytesInOutput": 1891
+        },
+        "src/index.tsx": {
+          "bytesInOutput": 264
         }
       },
-      "bytes": 4921511
+      "bytes": 4920657
     },
     "../assets/editor.css": {
       "imports": [
@@ -6113,13 +6165,13 @@
       ],
       "inputs": {
         "src/styles.css": {
-          "bytesInOutput": 391
+          "bytesInOutput": 993
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 144663
         }
       },
-      "bytes": 145072
+      "bytes": 145674
     }
   }
 }

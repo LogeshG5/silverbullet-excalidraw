@@ -36,3 +36,40 @@ Hide library for now, causes crash with JCEF
 label[title="Library"] {
     display: none !important;
 }
+#widget {
+  height: 400px;
+  width: 100%;
+  --shadow-island: 0px 0px .9310142993927002px 0px rgba(0, 0, 0, .17), 0px 0px 3.1270833015441895px 0px rgba(0, 0, 0, .08), 0px 7px 14px 0px rgba(0, 0, 0, .05);
+  --border-radius-lg: 8px;
+}
+
+.excalidraw-viewer,
+.excalidraw-editor {
+  height: 100%;
+}
+
+.App-toolbar-content,
+.mobile-misc-tools-container {
+  display: none !important;
+}
+
+#edit-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+
+#edit-fullscreen {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+}
+
+#widget .button {
+  border: none;
+  z-index: 1000;
+  background-color: var(--island-bg-color);
+  box-shadow: var(--shadow-island);
+  border-radius: var(--border-radius-lg);
+  padding: 8px 14px;
+}

@@ -16,8 +16,8 @@ async function getHtmlJs(
   const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
 
-  const widgetHtml = `<style>${css}</style><div id="root" class="excalidraw-widget"></div>`;
-  const fullscreenHtml = `<style>${css}</style><div id="root"></div>`;
+  const widgetHtml = `<style>${css}</style><div id="widget" class="excalidraw-widget"></div>`;
+  const fullscreenHtml = `<style>${css}</style><div id="editor"></div>`;
 
   const baseScript = `
     ${js};
