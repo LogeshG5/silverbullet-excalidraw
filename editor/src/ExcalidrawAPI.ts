@@ -7,19 +7,16 @@ import {
     loadFromBlob,
     serializeAsJSON,
     MainMenu,
-    THEME
 } from "@excalidraw/excalidraw";
 import type { RefObject, ReactElement } from "react";
 import { debounce, getExtension } from "./helpers";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
-import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
 
 
 export class ExcalidrawApiBridge {
     private readonly excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>;
-    // private _setTheme: React.Dispatch<Theme> | null = null;
 
     debouncedSave: () => void;
     constructor(excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>) {
@@ -29,10 +26,6 @@ export class ExcalidrawApiBridge {
             500
         );
     }
-
-    // set setTheme(value: React.Dispatch<Theme>) {
-    //     this._setTheme = value;
-    // }
 
     private excalidraw(): ExcalidrawImperativeAPI {
         return this.excalidrawRef.current!;
@@ -110,8 +103,7 @@ export class ExcalidrawApiBridge {
         this.write();
     };
 
-    load = (message: { blob: Blob; theme: Theme }): void => {
-        // this._setTheme!(message.theme);
+    public async load(message: { blob: Blob }): Promise<void> {
         loadFromBlob(message.blob, null, null)
             .then((restoredState: RestoredDataState | undefined) => {
                 if (!restoredState) return;

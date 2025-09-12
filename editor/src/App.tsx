@@ -7,6 +7,7 @@ import { ExcalidrawApiBridge } from "./ExcalidrawAPI";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { Excalidraw, THEME } from "@excalidraw/excalidraw";
 import { getBlob, getExtension } from "./helpers";
+import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
 
 declare global {
     var silverbullet: {
@@ -23,7 +24,7 @@ declare global {
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
 
 
-function App() {
+function App({ theme }: { theme: Theme }) {
 
     const [isEditing, setIsEditing] = React.useState(false);
 
@@ -53,7 +54,7 @@ function App() {
         syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
             const fileExtension = getExtension(window.diagramPath);
             const blob = getBlob(data, fileExtension);
-            apiBridge!.load({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
+            apiBridge!.load({ blob: blob });
         });
     }, []);
 
@@ -61,12 +62,12 @@ function App() {
         <Excalidraw
             excalidrawAPI={excalidrawRef}
             isCollaborating={false}
-            // initialData={doc}
             initialData={{ appState: { exportEmbedScene: true } }
             }
             onChange={onChange}
             viewModeEnabled={!isEditing}
-            // theme={darkMode ? "dark" : "light"}
+            theme={theme}
+
             UIOptions={{
                 canvasActions: {
                     loadScene: false,
@@ -86,8 +87,8 @@ function App() {
 }
 
 export function renderWidget(rootElement: HTMLElement) {
+
+    let theme: Theme = window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK;
     const root = ReactDOM.createRoot(rootElement);
-    const fileName = rootElement.dataset.filename!;
-    const darkMode = rootElement.dataset.darkmode === "true";
-    root.render(<App />);
+    root.render(<App theme={theme} />);
 }
