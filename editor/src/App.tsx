@@ -53,16 +53,17 @@ function App() {
         syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
             const fileExtension = getExtension(window.diagramPath);
             const blob = getBlob(data, fileExtension);
-            apiBridge!.handleLoadFromFile({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
+            apiBridge!.load({ blob: blob, theme: window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK });
         });
     }, []);
 
-    return <div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"}>
+    return (<div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"} >
         <Excalidraw
             excalidrawAPI={excalidrawRef}
             isCollaborating={false}
             // initialData={doc}
-            initialData={{ appState: { exportEmbedScene: true } }}
+            initialData={{ appState: { exportEmbedScene: true } }
+            }
             onChange={onChange}
             viewModeEnabled={!isEditing}
             // theme={darkMode ? "dark" : "light"}
@@ -73,14 +74,15 @@ function App() {
                     saveToActiveFile: false,
                 }
             }}
-            renderTopRightUI={isEditing
-                ? () => <button className="button" id="exit-button" onClick={stopEditing}>Exit</button>
-                : () => null}
+            renderTopRightUI={
+                isEditing
+                    ? () => < button className="button" id="exit-button" onClick={stopEditing} > Exit </button>
+                    : () => null}
         >
-            {!isEditing && <button className="button" id="edit-button" onClick={startEditing}>Edit</button>}
-            {isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen}>Fullscreen</button>}
+            {!isEditing && <button className="button" id="edit-button" onClick={startEditing} > Edit </button>}
+            {isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} > Fullscreen </button>}
         </Excalidraw>
-    </div>
+    </div>);
 }
 
 export function renderWidget(rootElement: HTMLElement) {
