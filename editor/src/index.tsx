@@ -13,16 +13,13 @@ import { renderEditor } from "./editor";
 // root.render(React.createElement(App));
 
 (function init() {
-    console.log("Got init call -------------------");
     const editorElement = document.getElementById("editor");
     const widgetElement = document.getElementById("widget");
     console.log({ widgetElement, editorElement });
 
     if (editorElement) {
-        console.log("rendering Editor");
         renderEditor(editorElement);
-    } else if (widgetElement && typeof silverbullet === "undefined") {
-        console.log("rendering widget");
+    } else if (widgetElement && typeof silverbullet === "undefined") { // workaround to stop widget to open unnecessarily 
         renderWidget(widgetElement);
     } else {
         console.error("Excalidraw: No editor or widget element found");

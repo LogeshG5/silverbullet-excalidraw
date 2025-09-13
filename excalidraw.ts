@@ -21,7 +21,7 @@ async function getHtmlJs(
   let html = "";
   switch (type) {
     case "editor": {
-      html = `<style>${css}</style><div id="editor" data-path="${path}" ${data}></div>`;
+      html = `<style>${css}</style><div id="editor" ${data}></div>`;
       break;
     }
     case "widget": {
@@ -29,7 +29,7 @@ async function getHtmlJs(
       break;
     }
     case "fullscreen": {
-      html = `<style>${css}</style><div id="widget" class="excalidraw-widget" ${data}></div>`;
+      html = `<style>${css}</style><div id="widget" class="excalidraw-fullscreen" ${data}></div>`;
       break;
     }
   }
