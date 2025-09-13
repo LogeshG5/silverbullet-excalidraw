@@ -73,3 +73,21 @@ label[title="Library"] {
   border-radius: var(--border-radius-lg);
   padding: 8px 14px;
 }
+#editor .excalidraw-viewer .App-toolbar-content {
+  display: none !important;
+}
+
+#editor, .excalidraw {
+  height: 100%;
+  width: 100%;
+}
+
+.button {
+  z-index: 1000;
+  color: var(--button-color, var(--color-on-surface));
+  background-color: var(--color-surface-low);
+  border: none;
+  border-radius: .5rem;
+  padding: 4px 8px;
+  cursor: pointer;
+}

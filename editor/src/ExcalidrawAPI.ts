@@ -47,7 +47,6 @@ export class ExcalidrawApiBridge {
     };
 
     private getSvg = (exportParams: object): Promise<SVGSVGElement> => {
-        console.debug("getSvg export config", exportParams);
         const sceneElements = this.excalidraw().getSceneElements();
         const appState = this.excalidraw().getAppState();
         return exportToSvg({
@@ -58,7 +57,6 @@ export class ExcalidrawApiBridge {
     };
 
     private getPng = (exportParams: object, mimeType: string): Promise<Blob> => {
-        console.debug("saveAsPng export config", exportParams);
         const sceneElements = this.excalidraw().getSceneElements();
         const appState = this.excalidraw().getAppState();
         const binaryFiles: Record<string, any> = {};
@@ -99,7 +97,6 @@ export class ExcalidrawApiBridge {
     }
 
     private save = async (): Promise<void> => {
-        console.debug("debounced scene changed 2");
         this.write();
     };
 
@@ -107,7 +104,6 @@ export class ExcalidrawApiBridge {
         loadFromBlob(message.blob, null, null)
             .then((restoredState: RestoredDataState | undefined) => {
                 if (!restoredState) return;
-                console.debug("Call updateApp and scene");
                 this.updateApp({ elements: restoredState.elements || [], appState: {} });
             })
             .catch((error: unknown) => {
