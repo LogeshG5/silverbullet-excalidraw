@@ -48,13 +48,11 @@ function App({ theme }: { theme: Theme }) {
         syscall("editor.navigate", window.diagramPath)
     }
 
-    const excalidrawRef = useCallback((excalidrawApi: ExcalidrawImperativeAPI) => {
+    const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        syscaller("space.readFile", window.diagramPath).then((data: BlobPart) => {
-            const fileExtension = getExtension(window.diagramPath);
-            const blob = getBlob(data, fileExtension);
-            apiBridge!.load({ blob: blob });
-        });
+        let data = await syscaller("space.readFile", window.diagramPath);
+        const blob = getBlob(data, getExtension(window.diagramPath));
+        apiBridge!.load({ blob: blob });
     }, []);
 
     return (<div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"} >

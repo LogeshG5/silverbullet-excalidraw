@@ -5359,7 +5359,7 @@
       "format": "esm"
     },
     "src/widget.tsx": {
-      "bytes": 3902,
+      "bytes": 3454,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3761,
+      "bytes": 3606,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5913,7 +5913,7 @@
           "bytesInOutput": 0
         },
         "src/widget.tsx": {
-          "bytesInOutput": 1308
+          "bytesInOutput": 1307
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 0
@@ -6156,13 +6156,13 @@
           "bytesInOutput": 1468
         },
         "src/editor.tsx": {
-          "bytesInOutput": 1356
+          "bytesInOutput": 1349
         },
         "src/index.tsx": {
           "bytesInOutput": 220
         }
       },
-      "bytes": 4921580
+      "bytes": 4921572
     },
     "../assets/editor.css": {
       "imports": [

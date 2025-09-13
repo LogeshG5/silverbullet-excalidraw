@@ -42,18 +42,16 @@ function App({ doc, theme, viewMode }: { doc: ExcalidrawInitialDataState, theme:
     }
 
     async function save() {
-        const serialized = apiBridge!.getJson();
-        globalThis.silverbullet.sendMessage("file-saved", { data: serialized });
+        const data = apiBridge!.getJson();
+        globalThis.silverbullet.sendMessage("file-saved", { data: data });
     }
 
     const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
 
-        syscaller("space.readFile", fileName).then((data: BlobPart) => {
-            const fileExtension = getExtension(fileName);
-            const blob = getBlob(data, fileExtension);
-            apiBridge!.load({ blob: blob });
-        });
+        let data = await syscaller("space.readFile", fileName);
+        const blob = getBlob(data, getExtension(fileName));
+        apiBridge!.load({ blob: blob });
 
         silverbullet.addEventListener("request-save", () => save());
     }, []);
@@ -86,7 +84,6 @@ async function open(root: ReactDOM.Root, data: string) {
     fileName = await silverbullet.syscall("editor.getCurrentPage");
     let params = new URLSearchParams(document.location.search);
     const viewMode = params.get("viewer") === "true";
-    // const excalidrawContent = new TextDecoder().decode(data);
     const doc = JSON.parse(data);
     root.render(<App doc={doc} theme={theme} viewMode={viewMode} />);
 }
