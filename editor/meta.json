@@ -1,7 +1,7 @@
 {
   "inputs": {
     "src/styles.css": {
-      "bytes": 1810,
+      "bytes": 2046,
       "imports": []
     },
     "node_modules/react/cjs/react.production.js": {
@@ -5343,7 +5343,7 @@
       "format": "esm"
     },
     "src/ExcalidrawAPI.ts": {
-      "bytes": 4152,
+      "bytes": 4613,
       "imports": [
         {
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
@@ -5359,7 +5359,7 @@
       "format": "esm"
     },
     "src/widget.tsx": {
-      "bytes": 3454,
+      "bytes": 3742,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3606,
+      "bytes": 3749,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5461,7 +5461,7 @@
       "format": "esm"
     },
     "src/index.tsx": {
-      "bytes": 891,
+      "bytes": 1066,
       "imports": [
         {
           "path": "react",
@@ -5913,7 +5913,7 @@
           "bytesInOutput": 0
         },
         "src/widget.tsx": {
-          "bytesInOutput": 1307
+          "bytesInOutput": 1393
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 0
@@ -6153,16 +6153,16 @@
           "bytesInOutput": 563
         },
         "src/ExcalidrawAPI.ts": {
-          "bytesInOutput": 1468
+          "bytesInOutput": 1642
         },
         "src/editor.tsx": {
-          "bytesInOutput": 1349
+          "bytesInOutput": 1362
         },
         "src/index.tsx": {
-          "bytesInOutput": 220
+          "bytesInOutput": 362
         }
       },
-      "bytes": 4921572
+      "bytes": 4921987
     },
     "../assets/editor.css": {
       "imports": [
@@ -6224,13 +6224,13 @@
       ],
       "inputs": {
         "src/styles.css": {
-          "bytesInOutput": 1232
+          "bytesInOutput": 1449
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 144663
         }
       },
-      "bytes": 145913
+      "bytes": 146130
     }
   }
 }

@@ -34,16 +34,17 @@ let fileName: string = "";
 function App({ doc, theme, viewMode }: { doc: ExcalidrawInitialDataState, theme: Theme, viewMode: boolean }) {
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
-    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef);
+    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef, fileName, "editor");
 
 
     function onChange(elements: readonly OrderedExcalidrawElement[], appState: AppState, files: BinaryFiles) {
         silverbullet.sendMessage("file-changed", {});
     }
 
-    async function save() {
-        const data = apiBridge!.getJson();
-        globalThis.silverbullet.sendMessage("file-saved", { data: data });
+    function save() {
+        // const data =
+        apiBridge!.save();
+        // globalThis.silverbullet.sendMessage("file-saved", { data: data });
     }
 
     const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
@@ -80,7 +81,8 @@ function App({ doc, theme, viewMode }: { doc: ExcalidrawInitialDataState, theme:
 }
 
 async function open(root: ReactDOM.Root, data: string) {
-    const theme: Theme = window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK;
+    const darkMode = await silverbullet.syscall("clientStore.get", "darkMode");
+    const theme: Theme = darkMode ? THEME.DARK : THEME.LIGHT;
     fileName = await silverbullet.syscall("editor.getCurrentPage");
     let params = new URLSearchParams(document.location.search);
     const viewMode = params.get("viewer") === "true";

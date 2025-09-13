@@ -23,12 +23,12 @@ declare global {
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
 
-function App({ theme }: { theme: Theme }) {
+function App({ fileName, theme }: { fileName: string, theme: Theme }) {
 
     const [isEditing, setIsEditing] = React.useState(false);
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
-    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef);
+    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef, fileName, "widget");
 
 
     function onChange(elements: readonly OrderedExcalidrawElement[], appState: AppState, files: BinaryFiles) {
@@ -44,14 +44,14 @@ function App({ theme }: { theme: Theme }) {
         apiBridge!.debouncedSave();
     }
 
-    function openFullScreen() {
-        syscall("editor.navigate", window.diagramPath)
+    async function openFullScreen() {
+        await syscall("editor.navigate", fileName)
     }
 
     const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
         excalidrawApiRef.current = excalidrawApi;
-        let data = await syscaller("space.readFile", window.diagramPath);
-        const blob = getBlob(data, getExtension(window.diagramPath));
+        let data = await syscaller("space.readFile", fileName);
+        const blob = getBlob(data, getExtension(fileName));
         apiBridge!.load({ blob: blob });
     }, []);
 
@@ -83,8 +83,10 @@ function App({ theme }: { theme: Theme }) {
 }
 
 export function renderWidget(rootElement: HTMLElement) {
-    let theme: Theme = window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK;
+    const fileName = rootElement.dataset.filename!;
+    const type = rootElement.dataset.type!;
+    const theme = rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<App theme={theme} />);
+    root.render(<App fileName={fileName} theme={theme} />);
 }
 

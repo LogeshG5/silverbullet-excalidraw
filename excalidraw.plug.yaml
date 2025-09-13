@@ -32,7 +32,8 @@ functions:
 
   openFullScreenEditor:
     path: ./excalidraw.ts:openFullScreenEditor
-    
+    syscall: "excalidraw.openFullScreenEditor"   
+
   excalidrawEditor:
     path: ./excalidraw.ts:openExcalidrawEditor
     editor: ["excalidraw"]

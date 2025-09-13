@@ -10,30 +10,35 @@ type DiagramType = "Widget" | "Attachment";
 
 async function getHtmlJs(
   path: string,
-  type: "fullscreen" | "widget" = "fullscreen"
+  type: "editor" | "widget" | "fullscreen"
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
+  const darkMode = await clientStore.get("darkMode");
   const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
+  const data = `data-filename="${path}" data-theme="${darkMode}" data-type="${type}"`;
 
-  const widgetHtml = `<style>${css}</style><div id="widget" class="excalidraw-widget"></div>`;
-  const fullscreenHtml = `<style>${css}</style><div id="editor"></div>`;
+  let html = "";
+  switch (type) {
+    case "editor": {
+      html = `<style>${css}</style><div id="editor" data-path="${path}" ${data}></div>`;
+      break;
+    }
+    case "widget": {
+      html = `<style>${css}</style><div id="widget" class="excalidraw-widget" ${data}></div>`;
+      break;
+    }
+    case "fullscreen": {
+      html = `<style>${css}</style><div id="widget" class="excalidraw-widget" ${data}></div>`;
+      break;
+    }
+  }
 
-  const baseScript = `
+  const script = `
     ${js};
-    window.diagramPath = "${path}";
-    window.excalidrawTheme = "${spaceTheme}";
   `;
 
-  const widgetScript = `
-    ${baseScript}
-    window.diagramMode = "widget";
-  `;
-
-  return {
-    html: type === "widget" ? widgetHtml : fullscreenHtml,
-    script: type === "widget" ? widgetScript : baseScript,
-  };
+  return { html: html, script: script };
 }
 
 export async function openExcalidrawEditor(): Promise<{
@@ -41,11 +46,11 @@ export async function openExcalidrawEditor(): Promise<{
   script: string;
 }> {
   const path = await editor.getCurrentPage();
-  return getHtmlJs(path);
+  return getHtmlJs(path, "editor");
 }
 
 export async function openFullScreenEditor(diagramPath: string): Promise<void> {
-  const assets = await getHtmlJs(diagramPath);
+  const assets = await getHtmlJs(diagramPath, "fullscreen");
   await editor.showPanel(
     "modal",
     1,

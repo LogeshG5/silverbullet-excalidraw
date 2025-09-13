@@ -17,14 +17,18 @@ const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : 
 
 export class ExcalidrawApiBridge {
     private readonly excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>;
+    private readonly fileName: string;
+    private readonly type: string;
 
     debouncedSave: () => void;
-    constructor(excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>) {
+    constructor(excalidrawRef: RefObject<ExcalidrawImperativeAPI | null>, fileName: string, type: string) {
         this.excalidrawRef = excalidrawRef;
         this.debouncedSave = debounce(
             this.save,
             500
         );
+        this.fileName = fileName;
+        this.type = type;
     }
 
     private excalidraw(): ExcalidrawImperativeAPI {
@@ -69,13 +73,13 @@ export class ExcalidrawApiBridge {
     };
 
 
-    write = () => {
-        const fileExtension = getExtension(window.diagramPath);
+    public save = async (): Promise<void> => {
+        const fileExtension = getExtension(this.fileName);
         const exportConfig = {};
         switch (fileExtension) {
             case "svg":
                 this.getSvg(exportConfig).then((svg) => {
-                    syscaller("space.writeFile", window.diagramPath, svg.outerHTML);
+                    syscaller("space.writeFile", this.fileName, svg.outerHTML);
                 });
                 break;
             case "png":
@@ -84,21 +88,23 @@ export class ExcalidrawApiBridge {
                     const reader = new FileReader();
                     reader.readAsDataURL(blob);
                     reader.onloadend = () => {
-                        syscaller("space.writeFile", window.diagramPath, blob);
+                        syscaller("space.writeFile", this.fileName, blob);
                     };
                 });
                 break;
             case "excalidraw":
-                syscaller("space.writeFile", window.diagramPath, this.getJson());
+                const data = this.getJson();
+                if (this.type === "widget") {
+                    syscaller("space.writeFile", this.fileName, data);
+                } else {
+                    globalThis.silverbullet.sendMessage("file-saved", { data: data });
+                }
                 break;
             default:
                 break;
         }
     }
 
-    private save = async (): Promise<void> => {
-        this.write();
-    };
 
     public async load(message: { blob: Blob }): Promise<void> {
         loadFromBlob(message.blob, null, null)
