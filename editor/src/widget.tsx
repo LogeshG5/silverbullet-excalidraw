@@ -23,6 +23,10 @@ declare global {
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
 
+function TopRightUI(isEditing: boolean) {
+    { !isEditing && <button className="button" id="edit-button" onClick={startEditing} >✎ᝰ</button> }
+    { isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button> }
+}
 
 function App({ theme }: { theme: Theme }) {
 
@@ -77,15 +81,15 @@ function App({ theme }: { theme: Theme }) {
             }}
             renderTopRightUI={
                 isEditing
-                    ? () => < button className="button" id="exit-button" onClick={stopEditing} > Exit </button>
+                    ? () => <div style={{ display: "flex", gap: "5px" }}><button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button><button className="button" id="exit-button" onClick={stopEditing} >✘ </button></div>
                     : () => null}
         >
-            {!isEditing && <button className="button" id="edit-button" onClick={startEditing} > Edit </button>}
-            {isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} > Fullscreen </button>}
+            {!isEditing && <button className="button" id="edit-button" onClick={startEditing} >✎ᝰ</button>}
         </Excalidraw>
     </div>);
 }
 
+// {isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button>}
 export function renderWidget(rootElement: HTMLElement) {
     let theme: Theme = window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK;
     const root = ReactDOM.createRoot(rootElement);

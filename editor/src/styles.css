@@ -59,11 +59,11 @@ label[title="Library"] {
   right: 0px;
 }
 
-#edit-fullscreen {
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-}
+/* #edit-fullscreen { */
+/*   position: absolute; */
+/*   bottom: 0px; */
+/*   right: 0px; */
+/* } */
 
 #widget .button {
   border: none;

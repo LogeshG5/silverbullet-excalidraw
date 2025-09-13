@@ -114,12 +114,4 @@ export class ExcalidrawApiBridge {
             });
     };
 
-    exit = () => {
-        this.write();
-        syscaller("sync.performSpaceSync").then(() => {
-            syscaller("editor.reloadUI");
-            syscaller("editor.hidePanel", "modal");
-        })
-    }
-
 }
