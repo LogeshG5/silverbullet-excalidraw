@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import ReactDOM from "react-dom/client";
 import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
 import { OrderedExcalidrawElement } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
@@ -22,11 +22,6 @@ declare global {
 }
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
-
-function TopRightUI(isEditing: boolean) {
-    { !isEditing && <button className="button" id="edit-button" onClick={startEditing} >✎ᝰ</button> }
-    { isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button> }
-}
 
 function App({ theme }: { theme: Theme }) {
 
@@ -89,7 +84,6 @@ function App({ theme }: { theme: Theme }) {
     </div>);
 }
 
-// {isEditing && <button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button>}
 export function renderWidget(rootElement: HTMLElement) {
     let theme: Theme = window.excalidrawTheme === "light" ? THEME.LIGHT : THEME.DARK;
     const root = ReactDOM.createRoot(rootElement);
