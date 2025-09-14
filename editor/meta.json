@@ -1,7 +1,7 @@
 {
   "inputs": {
     "src/styles.css": {
-      "bytes": 1782,
+      "bytes": 1721,
       "imports": []
     },
     "node_modules/react/cjs/react.production.js": {
@@ -5456,7 +5456,7 @@
       "format": "esm"
     },
     "src/index.tsx": {
-      "bytes": 982,
+      "bytes": 711,
       "imports": [
         {
           "path": "react",
@@ -6219,13 +6219,13 @@
       ],
       "inputs": {
         "src/styles.css": {
-          "bytesInOutput": 1482
+          "bytesInOutput": 1437
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 144663
         }
       },
-      "bytes": 146163
+      "bytes": 146118
     }
   }
 }

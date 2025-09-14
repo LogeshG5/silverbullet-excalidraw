@@ -13,10 +13,6 @@ body {
     width: 100vw;
     height: 100vh !important;
 }
-.excalidraw-wrapper {
-    width: 100vw;
-    height: 100vh;
-}
 
 .App-menu_top > :first-child .Stack.Stack_horizontal {
     display: none !important;
