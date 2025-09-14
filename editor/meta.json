@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3593,
+      "bytes": 3301,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5423,12 +5423,7 @@
           "original": "react-dom/client"
         },
         {
-          "path": "@excalidraw/excalidraw/dist/types/excalidraw/types",
-          "kind": "import-statement",
-          "external": true
-        },
-        {
-          "path": "@excalidraw/excalidraw/dist/types/excalidraw/element/types",
+          "path": "@excalidraw/excalidraw/types",
           "kind": "import-statement",
           "external": true
         },
@@ -5796,7 +5791,7 @@
           "bytesInOutput": 55184
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/hu-HU-A5ZG7DT2.js": {
-          "bytesInOutput": 20669
+          "bytesInOutput": 20665
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/id-ID-SAP4L64H.js": {
           "bytesInOutput": 19990
@@ -6156,13 +6151,13 @@
           "bytesInOutput": 1538
         },
         "src/editor.tsx": {
-          "bytesInOutput": 1311
+          "bytesInOutput": 1222
         },
         "src/index.tsx": {
           "bytesInOutput": 245
         }
       },
-      "bytes": 4921838
+      "bytes": 4921745
     },
     "../assets/editor.css": {
       "imports": [

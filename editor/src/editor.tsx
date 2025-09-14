@@ -1,13 +1,17 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useRef, useCallback } from "react";
 import ReactDOM from "react-dom/client";
-import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
-import { OrderedExcalidrawElement } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
+import {
+    AppState,
+    BinaryFiles,
+    ExcalidrawInitialDataState,
+    Theme,
+    OrderedExcalidrawElement,
+    ExcalidrawImperativeAPI,
+} from "@excalidraw/excalidraw/types";
 import "@excalidraw/excalidraw/index.css";
 import { ExcalidrawApiBridge } from "./ExcalidrawAPI";
-import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { Excalidraw, THEME } from "@excalidraw/excalidraw";
 import { getBlob, getExtension } from "./helpers";
-import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
 
 declare global {
     var silverbullet: {
@@ -17,77 +21,84 @@ declare global {
     };
 }
 
-const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
+const syscaller =
+    typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall;
 
-function TopRightUI() {
-    return <button
-        className="button" />
+interface AppProps {
+    doc: ExcalidrawInitialDataState;
+    theme: Theme;
+    viewMode: boolean;
+    fileName: string;
 }
 
-let fileName: string = "";
-
-
-function App({ doc, theme, viewMode }: { doc: ExcalidrawInitialDataState, theme: Theme, viewMode: boolean }) {
-
+function App({ doc, theme, viewMode, fileName }: AppProps) {
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
-    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef, fileName, "editor");
+    const apiBridgeRef = useRef(
+        new ExcalidrawApiBridge(excalidrawApiRef, fileName, "editor")
+    );
 
-
-    function onChange(elements: readonly OrderedExcalidrawElement[], appState: AppState, files: BinaryFiles) {
+    const onChange = useCallback(() => {
         silverbullet.sendMessage("file-changed", {});
-    }
+    },
+        []
+    );
 
-    function save() {
-        // const data =
-        apiBridge!.save();
-        // globalThis.silverbullet.sendMessage("file-saved", { data: data });
-    }
-
-    const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
-        excalidrawApiRef.current = excalidrawApi;
-
-        let data = await syscaller("space.readFile", fileName);
-        const blob = getBlob(data, getExtension(fileName));
-        apiBridge!.load({ blob: blob });
-
-        silverbullet.addEventListener("request-save", () => save());
+    const save = useCallback(() => {
+        apiBridgeRef.current.save();
     }, []);
 
-    return (<div className={viewMode ? "excalidraw-viewer" : "excalidraw-editor"} >
-        <Excalidraw
-            excalidrawAPI={excalidrawRef}
-            isCollaborating={false}
-            initialData={doc}
-            onChange={onChange}
-            viewModeEnabled={viewMode}
-            zenModeEnabled={viewMode}
-            theme={theme}
+    const excalidrawRef = useCallback(
+        async (excalidrawApi: ExcalidrawImperativeAPI) => {
+            excalidrawApiRef.current = excalidrawApi;
 
-            UIOptions={{
-                canvasActions: {
-                    loadScene: false,
-                    saveAsImage: false,
-                    saveToActiveFile: false,
-                }
-            }}
-            renderTopRightUI={TopRightUI}
-        >
-        </Excalidraw>
-    </div>);
+            const data = await syscaller("space.readFile", fileName);
+            const blob = getBlob(data, getExtension(fileName));
+            apiBridgeRef.current.load({ blob });
+
+            silverbullet.addEventListener("request-save", () => save());
+        },
+        [fileName, save]
+    );
+
+    return (
+        <div className={viewMode ? "excalidraw-viewer" : "excalidraw-editor"}>
+            <Excalidraw
+                excalidrawAPI={excalidrawRef}
+                isCollaborating={false}
+                initialData={doc}
+                onChange={onChange}
+                viewModeEnabled={viewMode}
+                zenModeEnabled={viewMode}
+                theme={theme}
+                UIOptions={{
+                    canvasActions: {
+                        loadScene: false,
+                        saveAsImage: false,
+                        saveToActiveFile: false,
+                    },
+                }}
+            />
+        </div>
+    );
 }
 
 async function open(root: ReactDOM.Root, data: string) {
     const darkMode = await silverbullet.syscall("clientStore.get", "darkMode");
     const theme: Theme = darkMode ? THEME.DARK : THEME.LIGHT;
-    fileName = await silverbullet.syscall("editor.getCurrentPage");
-    let params = new URLSearchParams(document.location.search);
-    const viewMode = params.get("viewer") === "true";
-    const doc = JSON.parse(data);
-    root.render(<App doc={doc} theme={theme} viewMode={viewMode} />);
+    const fileName: string = await silverbullet.syscall("editor.getCurrentPage");
+
+
+    const doc: ExcalidrawInitialDataState = JSON.parse(data);
+    root.render(<App doc={doc} theme={theme} viewMode={false} fileName={fileName} />);
 }
 
 export function renderEditor(rootElement: HTMLElement) {
     const root = ReactDOM.createRoot(rootElement);
-    silverbullet.addEventListener("file-open", (event) => open(root, event.detail.data));
-    silverbullet.addEventListener("file-update", (event) => open(root, event.detail.data));
+    silverbullet.addEventListener("file-open", (event) =>
+        open(root, event.detail.data)
+    );
+    silverbullet.addEventListener("file-update", (event) =>
+        open(root, event.detail.data)
+    );
 }
+
