@@ -1,7 +1,7 @@
 {
   "inputs": {
     "src/styles.css": {
-      "bytes": 2170,
+      "bytes": 1782,
       "imports": []
     },
     "node_modules/react/cjs/react.production.js": {

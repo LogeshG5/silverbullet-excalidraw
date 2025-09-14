@@ -64,12 +64,6 @@ kbd {
   right: 0px;
 }
 
-/* #edit-fullscreen { */
-/*   position: absolute; */
-/*   bottom: 0px; */
-/*   right: 0px; */
-/* } */
-
 #widget .button {
   border: none;
   z-index: 1000;
@@ -78,6 +72,7 @@ kbd {
   border-radius: var(--border-radius-lg);
   padding: 8px 14px;
 }
+
 #editor .excalidraw-viewer .App-toolbar-content {
   display: none !important;
 }

@@ -203,7 +203,7 @@ url:${filePath}
 }
 
 async function insertAttachment(from: number, to: number, name: string, filePath: string): Promise<void> {
-  const link = `![${name}](${filePath})`;
+  const link = `![${name}](${name})`;
   await editor.replaceRange(from, to, link);
   await openFullScreenEditor(filePath);
 }
