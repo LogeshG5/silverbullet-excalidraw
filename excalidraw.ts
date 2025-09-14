@@ -29,7 +29,7 @@ async function getHtmlJs(
       break;
     }
     case "fullscreen": {
-      html = `<style>${css}</style><div id="widget" class="excalidraw-fullscreen" ${data}></div>`;
+      html = `<style>${css}</style><div id="svgeditor" class="excalidraw-fullscreen" ${data}></div>`;
       break;
     }
   }

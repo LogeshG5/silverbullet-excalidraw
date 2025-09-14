@@ -6,7 +6,6 @@ import {
     exportToSvg,
     loadFromBlob,
     serializeAsJSON,
-    MainMenu,
 } from "@excalidraw/excalidraw";
 import type { RefObject, ReactElement } from "react";
 import { debounce, getExtension } from "./helpers";

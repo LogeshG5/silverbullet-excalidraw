@@ -78,6 +78,12 @@ kbd {
   width: 100%;
 }
 
+
+#svgeditor, .excalidraw {
+  height: 100%;
+  width: 100%;
+}
+
 .button {
   z-index: 1000;
   color: var(--button-color, var(--color-on-surface));
