@@ -1,13 +1,17 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { AppState, BinaryFiles, ExcalidrawInitialDataState } from "@excalidraw/excalidraw/dist/types/excalidraw/types";
-import { OrderedExcalidrawElement } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
+import {
+    AppState,
+    BinaryFiles,
+    ExcalidrawInitialDataState,
+} from "@excalidraw/excalidraw/types";
+import { OrderedExcalidrawElement } from "@excalidraw/excalidraw/types";
 import "@excalidraw/excalidraw/index.css";
 import { ExcalidrawApiBridge } from "./ExcalidrawAPI";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
 import { Excalidraw, THEME } from "@excalidraw/excalidraw";
 import { getBlob, getExtension } from "./helpers";
-import type { Theme } from "@excalidraw/excalidraw/dist/types/excalidraw/element/types";
+import type { Theme } from "@excalidraw/excalidraw/types";
 
 declare global {
     var silverbullet: {
@@ -21,71 +25,119 @@ declare global {
     var excalidrawTheme: string;
 }
 
-const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
+const syscaller =
+    typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall;
 
-function App({ fileName, theme }: { fileName: string, theme: Theme }) {
+interface AppProps {
+    fileName: string;
+    theme: Theme;
+}
 
-    const [isEditing, setIsEditing] = React.useState(false);
+
+function App({ fileName, theme }: AppProps) {
+    const [isEditing, setIsEditing] = useState(false);
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
-    const apiBridge = new ExcalidrawApiBridge(excalidrawApiRef, fileName, "widget");
+    const apiBridge = useRef(
+        new ExcalidrawApiBridge(excalidrawApiRef, fileName, "widget")
+    ).current;
 
+    const onChange = useCallback(() => {
+        apiBridge.debouncedSave();
+    },
+        [apiBridge]
+    );
 
-    function onChange(elements: readonly OrderedExcalidrawElement[], appState: AppState, files: BinaryFiles) {
-        apiBridge!.debouncedSave();
-    }
-
-    function startEditing() {
-        setIsEditing(true);
-    }
-
-    function stopEditing() {
+    const startEditing = useCallback(() => setIsEditing(true), []);
+    const stopEditing = useCallback(() => {
         setIsEditing(false);
-        apiBridge!.debouncedSave();
-    }
+        apiBridge.debouncedSave();
+    }, [apiBridge]);
 
-    async function openFullScreen() {
-        await syscall("editor.navigate", fileName)
-    }
+    const openFullScreen = useCallback(async () => {
+        await syscall("editor.navigate", fileName);
+    }, [fileName]);
 
-    const excalidrawRef = useCallback(async (excalidrawApi: ExcalidrawImperativeAPI) => {
-        excalidrawApiRef.current = excalidrawApi;
-        let data = await syscaller("space.readFile", fileName);
-        const blob = getBlob(data, getExtension(fileName));
-        apiBridge!.load({ blob: blob });
-    }, []);
+    const excalidrawRef = useCallback(
+        async (excalidrawApi: ExcalidrawImperativeAPI) => {
+            excalidrawApiRef.current = excalidrawApi;
+            const data = await syscaller("space.readFile", fileName);
+            const blob = getBlob(data, getExtension(fileName));
+            apiBridge.load({ blob });
+        },
+        [fileName, apiBridge]
+    );
 
-    return (<div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"} >
-        <Excalidraw
-            excalidrawAPI={excalidrawRef}
-            isCollaborating={false}
-            initialData={{ appState: { exportEmbedScene: true } }
-            }
-            onChange={onChange}
-            viewModeEnabled={!isEditing}
-            theme={theme}
+    const UiControls = () => (
+        <div style={{ display: "flex", gap: "5px" }}>
+            <button
+                className="button"
+                id="edit-fullscreen"
+                onClick={openFullScreen}
+                title="Open fullscreen"
+            >
+                ⛶
+            </button>
 
-            UIOptions={{
-                canvasActions: {
-                    loadScene: false,
-                    saveAsImage: false,
-                    saveToActiveFile: false,
-                }
-            }}
-            renderTopRightUI={
-                isEditing
-                    ? () => <div style={{ display: "flex", gap: "5px" }}><button className="button" id="edit-fullscreen" onClick={openFullScreen} >🗖</button><button className="button" id="exit-button" onClick={stopEditing} >✘ </button></div>
-                    : () => null}
+        </div>
+    );
+
+    const EditButton = () => (
+        <button
+            className="button"
+            id="edit-button"
+            onClick={startEditing}
+            title="Edit"
         >
-            {!isEditing && <button className="button" id="edit-button" onClick={startEditing} >✎ᝰ</button>}
-        </Excalidraw>
-    </div>);
+            ✎
+        </button>
+    );
+
+    const LockButton = () => (
+        <button
+            className="button"
+            id="edit-button"
+            onClick={stopEditing}
+            title="Stop editing"
+        >
+            🔒
+        </button>
+    );
+
+    return (
+        <div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"}>
+            <Excalidraw
+                excalidrawAPI={excalidrawRef}
+                isCollaborating={false}
+                initialData={
+                    { appState: { exportEmbedScene: true }, } as ExcalidrawInitialDataState
+                }
+                onChange={onChange}
+                viewModeEnabled={!isEditing}
+                theme={theme}
+                UIOptions={{
+                    canvasActions: {
+                        loadScene: false,
+                        saveAsImage: false,
+                        saveToActiveFile: false,
+                    },
+                }}
+                renderTopRightUI={(isMobile, appState) =>
+                    isEditing ? <UiControls /> : null
+                }
+            >
+                {!isEditing && <EditButton />}
+                {isEditing && <LockButton />}
+            </Excalidraw>
+        </div>
+    );
 }
 
 export function renderWidget(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
-    const type = rootElement.dataset.type!;
-    const theme = rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
+    const theme =
+        rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
+
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App fileName={fileName} theme={theme} />);
 }
