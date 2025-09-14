@@ -18,29 +18,25 @@ Run `Plugs: Update` command and off you go!
 
 ## Usage
 
-https://github.com/user-attachments/assets/65c8aab8-aa2a-4878-84b9-852ca83d9b53
+https://github.com/user-attachments/assets/1402f02d-b85b-4cb9-866f-16ab7b478f9c
 
 ### Create New Diagram
 
-Run `Excalidraw: Create diagram` command and type in the name of the diagram.
+Run `Excalidraw: Create diagram` command and type in the name of the diagram. (or) Use `/excalidraw` slash command. 
 
-(or)
+A code widget will be inserted. Move away from the code widget and you will see the diagram. 
 
-In the editor, type the name of the diagram e.g., `flowchart.excalidraw.svg`, select it and run `Excalidraw: Create diagram` command.
+If you wish to create SVG/PNG files, Run `Excalidraw: Create SVG/PNG diagram`. 
 
-Excalidraw editor will open. Make your changes and it is automatically saved. Once done close the editor and refresh the page.
+### Use Document Picker
 
-Note: You will have to refresh the page to view the updates.
+Run `Navigate: Document Picker` and select .excalidraw files to open the editor.
 
-### Edit Existing Diagram
-
-Attach your diagrams to the page `![FlowChart](FlowChart.excalidraw.png)`.
+### Edit SVG/PNG Diagram
 
 Run `Excalidraw: Edit diagram`.
 
 If multiple diagrams are present in a page, you will be prompted to choose one.
-
-Note: You will have to refresh the page to view the updates.
 
 ## Build the Plugin
 
