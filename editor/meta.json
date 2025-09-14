@@ -5359,7 +5359,7 @@
       "format": "esm"
     },
     "src/widget.tsx": {
-      "bytes": 4338,
+      "bytes": 4246,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3685,
+      "bytes": 3593,
       "imports": [
         {
           "path": "node_modules/react/index.js",

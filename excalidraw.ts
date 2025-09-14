@@ -99,7 +99,7 @@ export async function editDiagram(): Promise<void> {
     return;
   }
   if (matches.length === 1) {
-    diagramPath = `${matches[0]}`;
+    diagramPath = `${directory}/${matches[0]}`;
   } else {
     const options = matches.map((model) => ({
       name: model,
@@ -110,7 +110,7 @@ export async function editDiagram(): Promise<void> {
       await editor.flashNotification("No diagram selected!", "error");
       return;
     }
-    diagramPath = `${selectedDiagram.name}`;
+    diagramPath = `${directory}/${selectedDiagram.name}`;
   }
   await openFullScreenEditor(diagramPath);
 }

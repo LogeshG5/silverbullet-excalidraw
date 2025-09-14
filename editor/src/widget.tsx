@@ -19,10 +19,6 @@ declare global {
         sendMessage: (name: string, ...args: any[]) => Promise<any>;
         addEventListener: (name: string, callback: (args: any) => void) => void;
     };
-
-    var diagramMode: string;
-    var diagramPath: string;
-    var excalidrawTheme: string;
 }
 
 const syscaller =
