@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3301,
+      "bytes": 3462,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -6197,7 +6197,7 @@
           "bytesInOutput": 1538
         },
         "src/editor.tsx": {
-          "bytesInOutput": 1222
+          "bytesInOutput": 1279
         },
         "src/svgeditor.tsx": {
           "bytesInOutput": 1151
@@ -6206,7 +6206,7 @@
           "bytesInOutput": 293
         }
       },
-      "bytes": 4922956
+      "bytes": 4923013
     },
     "../assets/editor.css": {
       "imports": [

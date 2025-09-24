@@ -82,13 +82,17 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
     );
 }
 
-async function open(root: ReactDOM.Root, data: Uint8Array) {
+async function open(root: ReactDOM.Root, data: any) {
     const darkMode = await silverbullet.syscall("clientStore.get", "darkMode");
     const theme: Theme = darkMode ? THEME.DARK : THEME.LIGHT;
     const fileName: string = await silverbullet.syscall("editor.getCurrentPage");
 
-
-    const json = new TextDecoder("utf-8").decode(data);
+    let json: string;
+    try {
+        json = new TextDecoder("utf-8").decode(data); // latest edge docker build (:v2 tag)
+    } catch {
+        json = data;
+    }
     const doc: ExcalidrawInitialDataState = JSON.parse(json);
     root.render(<App doc={doc} theme={theme} viewMode={false} fileName={fileName} />);
 }
