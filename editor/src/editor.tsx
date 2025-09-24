@@ -82,13 +82,14 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
     );
 }
 
-async function open(root: ReactDOM.Root, data: string) {
+async function open(root: ReactDOM.Root, data: Uint8Array) {
     const darkMode = await silverbullet.syscall("clientStore.get", "darkMode");
     const theme: Theme = darkMode ? THEME.DARK : THEME.LIGHT;
     const fileName: string = await silverbullet.syscall("editor.getCurrentPage");
 
 
-    const doc: ExcalidrawInitialDataState = JSON.parse(data);
+    const json = new TextDecoder("utf-8").decode(data);
+    const doc: ExcalidrawInitialDataState = JSON.parse(json);
     root.render(<App doc={doc} theme={theme} viewMode={false} fileName={fileName} />);
 }
 
