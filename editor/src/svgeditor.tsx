@@ -21,12 +21,13 @@ const syscaller =
     typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall;
 
 interface AppProps {
+    doc: ExcalidrawInitialDataState;
     fileName: string;
     theme: Theme;
 }
 
 
-function App({ fileName, theme }: AppProps) {
+function App({ doc, fileName, theme }: AppProps) {
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     const apiBridge = useRef(
@@ -52,7 +53,7 @@ function App({ fileName, theme }: AppProps) {
             excalidrawApiRef.current = excalidrawApi;
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridge.load({ blob });
+            apiBridge.load({ blob: blob, viewMode: false });
         },
         [fileName, apiBridge]
     );
@@ -76,9 +77,7 @@ function App({ fileName, theme }: AppProps) {
             <Excalidraw
                 excalidrawAPI={excalidrawRef}
                 isCollaborating={false}
-                initialData={
-                    { appState: { exportEmbedScene: true }, } as ExcalidrawInitialDataState
-                }
+                // initialData={doc}
                 onChange={onChange}
                 viewModeEnabled={false}
                 theme={theme}
@@ -98,12 +97,21 @@ function App({ fileName, theme }: AppProps) {
     );
 }
 
-export function renderSvgEditorElement(rootElement: HTMLElement) {
+export async function renderSvgEditorElement(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
     const theme =
         rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
 
+    let data = await syscaller("space.readFile", fileName);
+    let svg: string;
+    try {
+        svg = new TextDecoder("utf-8").decode(data); // latest edge docker build (:v2 tag)
+    } catch {
+        svg = data;
+    }
+    const doc: ExcalidrawInitialDataState = svg;
+    const isRoMode = (await syscaller("system.getMode")) === "ro";
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<App fileName={fileName} theme={theme} />);
+    root.render(<App doc={doc} theme={theme} fileName={fileName} />);
 }
 

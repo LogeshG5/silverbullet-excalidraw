@@ -34,17 +34,18 @@ export class ExcalidrawApiBridge {
         return this.excalidrawRef.current!;
     }
 
-    private updateApp = ({ elements, appState }: { elements: any[]; appState: object }): void => {
-        this.excalidraw().updateScene({ elements, appState });
+    private updateApp = (restoredData: RestoredDataState): void => {
+        this.excalidraw().updateScene(restoredData);
         this.excalidraw().scrollToContent(undefined, { fitToContent: true });
+        // Restore files(embedded images) specifically as updateScene wasn't enough
+        this.excalidrawRef.current!.addFiles(restoredData.files);
     };
 
     getJson = (): string => {
-        const binaryFiles: Record<string, any> = {};
         return serializeAsJSON(
             this.excalidraw().getSceneElements(),
             this.excalidraw().getAppState(),
-            binaryFiles,
+            this.excalidraw().getFiles(),
             "local"
         );
     };
@@ -55,18 +56,17 @@ export class ExcalidrawApiBridge {
         return exportToSvg({
             elements: sceneElements,
             appState: { ...appState, ...exportParams, exportEmbedScene: true },
-            files: {},
+            files: this.excalidraw().getFiles(),
         });
     };
 
     private getPng = (exportParams: object, mimeType: string): Promise<Blob> => {
         const sceneElements = this.excalidraw().getSceneElements();
         const appState = this.excalidraw().getAppState();
-        const binaryFiles: Record<string, any> = {};
         return exportToBlob({
             elements: sceneElements,
             appState: { ...appState, ...exportParams, exportEmbedScene: true },
-            files: binaryFiles,
+            files: this.excalidraw().getFiles(),
             mimeType,
         });
     };
@@ -99,7 +99,8 @@ export class ExcalidrawApiBridge {
             case "excalidraw":
                 const data = this.getJson();
                 if (this.type === "widget") {
-                    syscaller("space.writeFile", this.fileName, data);
+                    // no need to save as widget is made read-only
+                    // syscaller("space.writeFile", this.fileName, data);
                 } else {
                     globalThis.silverbullet.sendMessage("file-saved", { data: data });
                 }
@@ -110,11 +111,20 @@ export class ExcalidrawApiBridge {
     }
 
 
-    public async load(message: { blob: Blob }): Promise<void> {
+    public async load(message: { blob: Blob, viewMode: boolean }): Promise<void> {
         loadFromBlob(message.blob, null, null)
             .then((restoredState: RestoredDataState | undefined) => {
                 if (!restoredState) return;
-                this.updateApp({ elements: restoredState.elements || [], appState: {} });
+                this.updateApp({
+                    elements: restoredState.elements || [],
+                    appState: {
+                        ...restoredState.appState,
+                        viewModeEnabled: message.viewMode,
+                        zenModeEnabled: message.viewMode,
+                    },
+                    // appState: {},
+                    files: restoredState.files || {},
+                });
             })
             .catch((error: unknown) => {
                 const errorStr = error instanceof Error ? error.toString() : JSON.stringify(error);

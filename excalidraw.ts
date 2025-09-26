@@ -16,11 +16,10 @@ async function getHtmlJs(
   type: "editor" | "widget" | "fullscreen",
   props: props = {}
 ): Promise<{ html: string; script: string }> {
-  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
-  const darkMode = await clientStore.get("darkMode");
+  const spaceTheme = await editor.getUiOption("theme");
   const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
-  const data = `data-filename="${path}" data-theme="${darkMode}" data-type="${type}"`;
+  const data = `data-filename="${path}" data-theme="${spaceTheme}" data-type="${type}"`;
 
   let html = "";
   switch (type) {

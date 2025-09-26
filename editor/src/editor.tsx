@@ -53,7 +53,7 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
 
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridgeRef.current.load({ blob });
+            apiBridgeRef.current.load({ blob: blob, viewMode: viewMode });
 
             silverbullet.addEventListener("request-save", () => save());
         },

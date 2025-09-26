@@ -25,13 +25,14 @@ const syscaller =
     typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall;
 
 interface AppProps {
+    doc: ExcalidrawInitialDataState;
     fileName: string;
     theme: Theme;
     viewMode: boolean;
 }
 
 
-function App({ fileName, theme, viewMode }: AppProps) {
+function App({ doc, fileName, theme, viewMode }: AppProps) {
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     const apiBridge = useRef(
@@ -55,7 +56,7 @@ function App({ fileName, theme, viewMode }: AppProps) {
 
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridge.load({ blob });
+            apiBridge.load({ blob: blob, viewMode: true });
         },
         [fileName, apiBridge]
     );
@@ -77,9 +78,7 @@ function App({ fileName, theme, viewMode }: AppProps) {
             <Excalidraw
                 excalidrawAPI={excalidrawRef}
                 isCollaborating={false}
-                initialData={
-                    { appState: { exportEmbedScene: true }, } as ExcalidrawInitialDataState
-                }
+                initialData={doc}
                 onChange={onChange}
                 viewModeEnabled={true}
                 zenModeEnabled={true}
@@ -101,15 +100,20 @@ function App({ fileName, theme, viewMode }: AppProps) {
     );
 }
 
-export function renderWidget(rootElement: HTMLElement) {
+export async function renderWidget(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
     const theme = rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
 
-    let viewMode = false;
-    syscaller("system.getMode").then((result: string) => {
-        viewMode = result === "ro";
-    });
+    let data = await syscaller("space.readFile", fileName);
+    let json: string;
+    try {
+        json = new TextDecoder("utf-8").decode(data); // latest edge docker build (:v2 tag)
+    } catch {
+        json = data;
+    }
+    const doc: ExcalidrawInitialDataState = JSON.parse(json);
+    const isRoMode = (await syscaller("system.getMode")) === "ro";
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<App fileName={fileName} theme={theme} viewMode={viewMode} />);
+    root.render(<App doc={doc} theme={theme} viewMode={isRoMode} fileName={fileName} />);
 }
 
