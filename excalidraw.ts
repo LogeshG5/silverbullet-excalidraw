@@ -92,8 +92,6 @@ Opens the editor
  
 */
 export async function editDiagram(): Promise<void> {
-  const pageName = await editor.getCurrentPage();
-  const directory = getCurrentDirectory(pageName);
   const text = await editor.getText();
   const matches = getDiagrams(text);
 
@@ -106,7 +104,7 @@ export async function editDiagram(): Promise<void> {
     return;
   }
   if (matches.length === 1) {
-    diagramPath = `${directory}/${matches[0]}`;
+    diagramPath = getDiagramPath(await editor.getCurrentPage(), matches[0]);
   } else {
     const options = matches.map((model) => ({
       name: model,
@@ -117,7 +115,7 @@ export async function editDiagram(): Promise<void> {
       await editor.flashNotification("No diagram selected!", "error");
       return;
     }
-    diagramPath = `${directory}/${selectedDiagram.name}`;
+    diagramPath = getDiagramPath(await editor.getCurrentPage(), selectedDiagram.name);
   }
   await openFullScreenEditor(diagramPath);
 }
@@ -147,8 +145,7 @@ async function createDiagram(diagramType: DiagramType): Promise<void | false> {
 
   diagramName = ensureExtension(diagramName, diagramType);
 
-  const directory = getCurrentDirectory(await editor.getCurrentPage());
-  const filePath = `${directory}/${diagramName}`;
+  const filePath = getDiagramPath(await editor.getCurrentPage(), diagramName);
 
   if (await fileAlreadyExists(filePath)) {
     return false;
@@ -180,9 +177,11 @@ function ensureExtension(name: string, type: DiagramType): string {
   return name;
 }
 
-function getCurrentDirectory(pageName: string): string {
-  const lastSlash = pageName.lastIndexOf("/");
-  return lastSlash !== -1 ? pageName.substring(0, lastSlash) : pageName;
+function getDiagramPath(pagePath: string, diagramName: string): string {
+  const parts = pagePath.split("/");
+  parts.pop(); // remove the original file name
+  parts.push(diagramName); // add the new file name
+  return parts.join("/");
 }
 
 async function fileAlreadyExists(filePath: string): Promise<boolean> {
