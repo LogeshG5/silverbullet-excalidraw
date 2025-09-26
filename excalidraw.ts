@@ -41,12 +41,16 @@ async function getHtmlJs(
   return { html: html, script: script };
 }
 
-export async function openExcalidrawEditor(): Promise<{
-  html: string;
-  script: string;
-}> {
+export async function openExcalidrawEditor(): Promise<{ html: string; script: string }> {
   const path = await editor.getCurrentPage();
   return getHtmlJs(path, "editor");
+}
+
+export async function openExcalidrawEditorWithFile(
+  diagramPath?: string
+): Promise<void> {
+  const path = diagramPath ?? (await editor.getCurrentPage());
+  await editor.navigate(path);
 }
 
 export async function openFullScreenEditor(diagramPath: string): Promise<void> {
@@ -200,6 +204,7 @@ async function insertExcalidrawBlock(from: number, to: number, filePath: string)
 url:${filePath}
 \`\`\``;
   await editor.replaceRange(from, to, block);
+  await openExcalidrawEditorWithFile(filePath);
 }
 
 async function insertAttachment(from: number, to: number, name: string, filePath: string): Promise<void> {

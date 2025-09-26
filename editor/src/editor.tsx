@@ -66,13 +66,14 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
                 excalidrawAPI={excalidrawRef}
                 isCollaborating={false}
                 initialData={doc}
+                key={fileName}
                 onChange={onChange}
                 viewModeEnabled={viewMode}
                 zenModeEnabled={viewMode}
                 theme={theme}
                 UIOptions={{
                     canvasActions: {
-                        loadScene: false,
+                        loadScene: true,
                         saveAsImage: false,
                         saveToActiveFile: false,
                     },
