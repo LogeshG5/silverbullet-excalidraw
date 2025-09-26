@@ -3,6 +3,7 @@ import {
   editor,
   space,
   clientStore,
+  system,
 } from "@silverbulletmd/silverbullet/syscalls";
 import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
@@ -13,7 +14,7 @@ type props = { height?: string }
 async function getHtmlJs(
   path: string,
   type: "editor" | "widget" | "fullscreen",
-  props: props
+  props: props = {}
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const darkMode = await clientStore.get("darkMode");
@@ -95,6 +96,7 @@ export async function editDiagram(): Promise<void> {
   const text = await editor.getText();
   const matches = getDiagrams(text);
 
+  if (await isRoMode()) return;
   let diagramPath = "";
   if (matches.length === 0) {
     await editor.flashNotification(
@@ -220,6 +222,16 @@ export async function createDiagramAsWidget(): Promise<void | false> {
   createDiagram("Widget");
 }
 
+async function isRoMode() {
+  const isRoMode = (await system.getMode()) === "ro";
+  if (isRoMode) {
+    await editor.flashNotification(
+      "Read only mode",
+      "error"
+    );
+  }
+  return isRoMode;
+}
 
 export async function createDiagramAsAttachment(): Promise<void | false> {
   createDiagram("Attachment");

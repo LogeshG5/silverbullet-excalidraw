@@ -95,7 +95,8 @@ async function open(root: ReactDOM.Root, data: any) {
         json = data;
     }
     const doc: ExcalidrawInitialDataState = JSON.parse(json);
-    root.render(<App doc={doc} theme={theme} viewMode={false} fileName={fileName} />);
+    const isRoMode = (await syscaller("system.getMode")) === "ro";
+    root.render(<App doc={doc} theme={theme} viewMode={isRoMode} fileName={fileName} />);
 }
 
 export function renderEditor(rootElement: HTMLElement) {

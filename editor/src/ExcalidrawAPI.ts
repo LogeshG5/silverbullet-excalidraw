@@ -75,6 +75,11 @@ export class ExcalidrawApiBridge {
     public save = async (): Promise<void> => {
         const fileExtension = getExtension(this.fileName);
         const exportConfig = {};
+        const isRoMode = (await syscaller("system.getMode")) === "ro";
+        if (isRoMode) {
+            console.log("Excalidraw: Not saving as system in ro mode");
+            return;
+        }
         switch (fileExtension) {
             case "svg":
                 this.getSvg(exportConfig).then((svg) => {

@@ -32,6 +32,7 @@ interface AppProps {
 
 function App({ fileName, theme }: AppProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [isRoMode, setIsRoMode] = useState(true);
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     const apiBridge = useRef(
@@ -51,12 +52,15 @@ function App({ fileName, theme }: AppProps) {
     }, [apiBridge]);
 
     const openFullScreen = useCallback(async () => {
-        await syscall("editor.navigate", fileName);
+        await syscaller("editor.navigate", fileName);
     }, [fileName]);
 
     const excalidrawRef = useCallback(
         async (excalidrawApi: ExcalidrawImperativeAPI) => {
             excalidrawApiRef.current = excalidrawApi;
+            const isRoMode = (await syscaller("system.getMode")) === "ro";
+            setIsRoMode(isRoMode);
+
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
             apiBridge.load({ blob });
@@ -122,7 +126,7 @@ function App({ fileName, theme }: AppProps) {
                     isEditing ? <UiControls /> : null
                 }
             >
-                {!isEditing && <EditButton />}
+                {!isEditing && !isRoMode && <EditButton />}
                 {isEditing && <LockButton />}
             </Excalidraw>
         </div>

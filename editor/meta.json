@@ -5343,7 +5343,7 @@
       "format": "esm"
     },
     "src/ExcalidrawAPI.ts": {
-      "bytes": 4487,
+      "bytes": 4689,
       "imports": [
         {
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
@@ -5359,7 +5359,7 @@
       "format": "esm"
     },
     "src/widget.tsx": {
-      "bytes": 4246,
+      "bytes": 4424,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5410,7 +5410,7 @@
       "format": "esm"
     },
     "src/editor.tsx": {
-      "bytes": 3492,
+      "bytes": 3562,
       "imports": [
         {
           "path": "node_modules/react/index.js",
@@ -5837,7 +5837,7 @@
           "bytesInOutput": 55184
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/hu-HU-A5ZG7DT2.js": {
-          "bytesInOutput": 20677
+          "bytesInOutput": 20681
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/locales/id-ID-SAP4L64H.js": {
           "bytesInOutput": 19990
@@ -5954,7 +5954,7 @@
           "bytesInOutput": 0
         },
         "src/widget.tsx": {
-          "bytesInOutput": 1516
+          "bytesInOutput": 1584
         },
         "node_modules/@excalidraw/excalidraw/dist/prod/index.css": {
           "bytesInOutput": 0
@@ -6194,10 +6194,10 @@
           "bytesInOutput": 563
         },
         "src/ExcalidrawAPI.ts": {
-          "bytesInOutput": 1562
+          "bytesInOutput": 1666
         },
         "src/editor.tsx": {
-          "bytesInOutput": 1281
+          "bytesInOutput": 1317
         },
         "src/svgeditor.tsx": {
           "bytesInOutput": 1151
@@ -6206,7 +6206,7 @@
           "bytesInOutput": 293
         }
       },
-      "bytes": 4923039
+      "bytes": 4923251
     },
     "../assets/editor.css": {
       "imports": [
