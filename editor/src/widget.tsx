@@ -27,12 +27,11 @@ const syscaller =
 interface AppProps {
     fileName: string;
     theme: Theme;
+    viewMode: boolean;
 }
 
 
-function App({ fileName, theme }: AppProps) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [isRoMode, setIsRoMode] = useState(true);
+function App({ fileName, theme, viewMode }: AppProps) {
 
     const excalidrawApiRef = useRef<ExcalidrawImperativeAPI | null>(null);
     const apiBridge = useRef(
@@ -45,21 +44,14 @@ function App({ fileName, theme }: AppProps) {
         [apiBridge]
     );
 
-    const startEditing = useCallback(() => setIsEditing(true), []);
-    const stopEditing = useCallback(() => {
-        setIsEditing(false);
-        apiBridge.debouncedSave();
-    }, [apiBridge]);
-
-    const openFullScreen = useCallback(async () => {
+    const startEditing = useCallback(async () => {
         await syscaller("editor.navigate", fileName);
     }, [fileName]);
+
 
     const excalidrawRef = useCallback(
         async (excalidrawApi: ExcalidrawImperativeAPI) => {
             excalidrawApiRef.current = excalidrawApi;
-            const isRoMode = (await syscaller("system.getMode")) === "ro";
-            setIsRoMode(isRoMode);
 
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
@@ -68,19 +60,6 @@ function App({ fileName, theme }: AppProps) {
         [fileName, apiBridge]
     );
 
-    const UiControls = () => (
-        <div style={{ display: "flex", gap: "5px" }}>
-            <button
-                className="button"
-                id="edit-fullscreen"
-                onClick={openFullScreen}
-                title="Open fullscreen"
-            >
-                ⛶
-            </button>
-
-        </div>
-    );
 
     const EditButton = () => (
         <button
@@ -93,19 +72,8 @@ function App({ fileName, theme }: AppProps) {
         </button>
     );
 
-    const LockButton = () => (
-        <button
-            className="button"
-            id="edit-button"
-            onClick={stopEditing}
-            title="Stop editing"
-        >
-            🔒
-        </button>
-    );
-
     return (
-        <div className={isEditing ? "excalidraw-editor" : "excalidraw-viewer"}>
+        <div className={"excalidraw-viewer"}>
             <Excalidraw
                 excalidrawAPI={excalidrawRef}
                 isCollaborating={false}
@@ -113,7 +81,8 @@ function App({ fileName, theme }: AppProps) {
                     { appState: { exportEmbedScene: true }, } as ExcalidrawInitialDataState
                 }
                 onChange={onChange}
-                viewModeEnabled={!isEditing}
+                viewModeEnabled={true}
+                zenModeEnabled={true}
                 theme={theme}
                 UIOptions={{
                     canvasActions: {
@@ -123,11 +92,10 @@ function App({ fileName, theme }: AppProps) {
                     },
                 }}
                 renderTopRightUI={(isMobile, appState) =>
-                    isEditing ? <UiControls /> : null
+                    null
                 }
             >
-                {!isEditing && !isRoMode && <EditButton />}
-                {isEditing && <LockButton />}
+                {!viewMode && <EditButton />}
             </Excalidraw>
         </div>
     );
@@ -135,10 +103,13 @@ function App({ fileName, theme }: AppProps) {
 
 export function renderWidget(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
-    const theme =
-        rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
+    const theme = rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
 
+    let viewMode = false;
+    syscaller("system.getMode").then((result: string) => {
+        viewMode = result === "ro";
+    });
     const root = ReactDOM.createRoot(rootElement);
-    root.render(<App fileName={fileName} theme={theme} />);
+    root.render(<App fileName={fileName} theme={theme} viewMode={viewMode} />);
 }
 
