@@ -8,9 +8,12 @@ import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
 type DiagramType = "Widget" | "Attachment";
 
+type props = { height?: string }
+
 async function getHtmlJs(
   path: string,
-  type: "editor" | "widget" | "fullscreen"
+  type: "editor" | "widget" | "fullscreen",
+  props: props
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const darkMode = await clientStore.get("darkMode");
@@ -25,7 +28,7 @@ async function getHtmlJs(
       break;
     }
     case "widget": {
-      html = `<style>${css}</style><div id="widget" class="excalidraw-widget" ${data}></div>`;
+      html = `<style>${css}</style><div id="widget" class="excalidraw-widget" style="height: ${props.height}" ${data}></div>`;
       break;
     }
     case "fullscreen": {
@@ -202,6 +205,7 @@ async function writeEmptyExcalidrawFile(filePath: string): Promise<void> {
 async function insertExcalidrawBlock(from: number, to: number, filePath: string): Promise<void> {
   const block = `\`\`\`excalidraw
 url:${filePath}
+height:500px
 \`\`\``;
   await editor.replaceRange(from, to, block);
   await openExcalidrawEditorWithFile(filePath);
@@ -222,19 +226,24 @@ export async function createDiagramAsAttachment(): Promise<void | false> {
   createDiagram("Attachment");
 }
 
+function extractValue(content: string, key: string): string | null {
+  const regex = new RegExp(`${key}:\\s*(.+)`, "i");
+  const match = content.match(regex);
+  return match ? match[1].trim() : null;
+}
 
 // Previewer iframe for the code widget
 export async function showWidget(
   widgetContents: string
 ): Promise<{ html: string; script: string }> {
-  const urlMatch = widgetContents.match(/url:\s*(.+)/i);
-  const path = urlMatch ? urlMatch[1].trim() : null;
+  const path = extractValue(widgetContents, "url");
+  const height = extractValue(widgetContents, "height");
 
   if (!path || !(await space.fileExists(path))) {
     return { html: `<pre>File does not exist</pre>`, script: "" };
   }
 
-  return getHtmlJs(path, 'widget');
+  return getHtmlJs(path, 'widget', { height: height || "600px" });
 }
 
 export function snippetSlashComplete(): SlashCompletions {

@@ -36,7 +36,7 @@ export class ExcalidrawApiBridge {
 
     private updateApp = ({ elements, appState }: { elements: any[]; appState: object }): void => {
         this.excalidraw().updateScene({ elements, appState });
-        this.excalidraw().scrollToContent();
+        this.excalidraw().scrollToContent(undefined, { fitToContent: true });
     };
 
     getJson = (): string => {

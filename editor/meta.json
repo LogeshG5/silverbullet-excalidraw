@@ -5343,7 +5343,7 @@
       "format": "esm"
     },
     "src/ExcalidrawAPI.ts": {
-      "bytes": 4454,
+      "bytes": 4487,
       "imports": [
         {
           "path": "node_modules/@excalidraw/excalidraw/dist/prod/index.js",
@@ -6194,7 +6194,7 @@
           "bytesInOutput": 563
         },
         "src/ExcalidrawAPI.ts": {
-          "bytesInOutput": 1538
+          "bytesInOutput": 1562
         },
         "src/editor.tsx": {
           "bytesInOutput": 1281
@@ -6206,7 +6206,7 @@
           "bytesInOutput": 293
         }
       },
-      "bytes": 4923015
+      "bytes": 4923039
     },
     "../assets/editor.css": {
       "imports": [
