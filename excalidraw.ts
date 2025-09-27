@@ -156,7 +156,13 @@ async function createDiagram(diagramType: DiagramType): Promise<void | false> {
   await writeEmptyExcalidrawFile(filePath);
 
   if (diagramType === "Widget") {
-    await insertExcalidrawBlock(from, to, filePath);
+    const isMarkdown = (await editor.getCurrentPageMeta()).contentType === "text/markdown";
+    if (isMarkdown) {
+      await insertExcalidrawBlock(from, to, filePath);
+    } else {
+      // you might be in document editor already...
+      await openExcalidrawEditorWithFile(filePath);
+    }
   } else {
     await insertAttachment(from, to, diagramName, filePath);
   }
@@ -209,7 +215,6 @@ url:${filePath}
 height:500px
 \`\`\``;
   await editor.replaceRange(from, to, block);
-  await openExcalidrawEditorWithFile(filePath);
 }
 
 async function insertAttachment(from: number, to: number, name: string, filePath: string): Promise<void> {
