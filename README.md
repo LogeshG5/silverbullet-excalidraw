@@ -26,6 +26,14 @@ Run `Excalidraw: Create diagram` command and type in the name of the diagram. (o
 
 A code widget will be inserted. Move away from the code widget and you will see the diagram. 
 
+A sample code widget text, 
+
+```excalidraw
+url:diagram.excalidraw
+height:600px
+theme:dark
+```
+
 If you wish to create SVG/PNG files, Run `Excalidraw: Create SVG/PNG diagram`. 
 
 ### Use Document Picker

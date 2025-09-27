@@ -9,7 +9,7 @@ import { SlashCompletions } from "@silverbulletmd/silverbullet/types";
 
 type DiagramType = "Widget" | "Attachment";
 
-type props = { height?: string }
+type props = { height?: string, theme?: string }
 
 async function getHtmlJs(
   path: string,
@@ -17,9 +17,10 @@ async function getHtmlJs(
   props: props = {}
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
+  const theme = props.theme || spaceTheme;
   const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
-  const data = `data-filename="${path}" data-theme="${spaceTheme}" data-type="${type}"`;
+  const data = `data-filename="${path}" data-theme="${theme}" data-type="${type}"`;
 
   let html = "";
   switch (type) {
@@ -248,12 +249,13 @@ export async function showWidget(
 ): Promise<{ html: string; script: string }> {
   const path = extractValue(widgetContents, "url");
   const height = extractValue(widgetContents, "height");
+  const theme = extractValue(widgetContents, "theme");
 
   if (!path || !(await space.fileExists(path))) {
     return { html: `<pre>File does not exist</pre>`, script: "" };
   }
 
-  return getHtmlJs(path, 'widget', { height: height || "600px" });
+  return getHtmlJs(path, 'widget', { height: height || "600px", theme: theme || undefined });
 }
 
 export function snippetSlashComplete(): SlashCompletions {
