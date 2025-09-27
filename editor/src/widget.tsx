@@ -27,7 +27,7 @@ const syscaller =
 interface AppProps {
     doc: ExcalidrawInitialDataState;
     fileName: string;
-    theme: Theme;
+    theme: string;
     viewMode: boolean;
 }
 
@@ -56,7 +56,7 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
 
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridge.load({ blob: blob, viewMode: true });
+            apiBridge.load({ blob: blob, viewMode: true, theme: theme });
         },
         [fileName, apiBridge]
     );
@@ -82,7 +82,6 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
                 onChange={onChange}
                 viewModeEnabled={true}
                 zenModeEnabled={true}
-                theme={theme}
                 UIOptions={{
                     canvasActions: {
                         loadScene: false,
@@ -102,7 +101,7 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
 
 export async function renderWidget(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
-    const theme = rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
+    const theme = rootElement.dataset.theme || "light";
 
     let data = await syscaller("space.readFile", fileName);
     let json: string;

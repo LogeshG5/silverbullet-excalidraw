@@ -6,6 +6,7 @@ import {
     exportToSvg,
     loadFromBlob,
     serializeAsJSON,
+    THEME,
 } from "@excalidraw/excalidraw";
 import type { RefObject, ReactElement } from "react";
 import { debounce, getExtension } from "./helpers";
@@ -111,7 +112,7 @@ export class ExcalidrawApiBridge {
     }
 
 
-    public async load(message: { blob: Blob, viewMode: boolean }): Promise<void> {
+    public async load(message: { blob: Blob, viewMode: boolean, theme: string }): Promise<void> {
         loadFromBlob(message.blob, null, null)
             .then((restoredState: RestoredDataState | undefined) => {
                 if (!restoredState) return;
@@ -121,6 +122,7 @@ export class ExcalidrawApiBridge {
                         ...restoredState.appState,
                         viewModeEnabled: message.viewMode,
                         zenModeEnabled: message.viewMode,
+                        theme: message.theme === "dark" ? THEME.DARK : THEME.LIGHT,
                     },
                     // appState: {},
                     files: restoredState.files || {},

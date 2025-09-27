@@ -4,7 +4,6 @@ import {
     AppState,
     BinaryFiles,
     ExcalidrawInitialDataState,
-    Theme,
     OrderedExcalidrawElement,
     ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types";
@@ -26,7 +25,7 @@ const syscaller =
 
 interface AppProps {
     doc: ExcalidrawInitialDataState;
-    theme: Theme;
+    theme: string;
     viewMode: boolean;
     fileName: string;
 }
@@ -53,7 +52,7 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
 
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridgeRef.current.load({ blob: blob, viewMode: viewMode });
+            apiBridgeRef.current.load({ blob: blob, viewMode: viewMode, theme: theme });
 
             silverbullet.addEventListener("request-save", () => save());
         },
@@ -70,12 +69,12 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
                 onChange={onChange}
                 viewModeEnabled={viewMode}
                 zenModeEnabled={viewMode}
-                theme={theme}
                 UIOptions={{
                     canvasActions: {
                         loadScene: true,
                         saveAsImage: false,
                         saveToActiveFile: false,
+                        toggleTheme: true,
                     },
                 }}
             />
@@ -85,7 +84,8 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
 
 async function open(root: ReactDOM.Root, data: any) {
     const darkMode = await silverbullet.syscall("clientStore.get", "darkMode");
-    const theme: Theme = darkMode ? THEME.DARK : THEME.LIGHT;
+    const theme: string = darkMode ? "dark" : "light";
+
     const fileName: string = await silverbullet.syscall("editor.getCurrentPage");
 
     let json: string;

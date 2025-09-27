@@ -16,7 +16,7 @@ async function getHtmlJs(
   type: "editor" | "widget" | "fullscreen",
   props: props = {}
 ): Promise<{ html: string; script: string }> {
-  const spaceTheme = await editor.getUiOption("theme");
+  const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const js = await asset.readAsset("excalidraw", "assets/editor.js");
   const css = await asset.readAsset("excalidraw", "assets/editor.css");
   const data = `data-filename="${path}" data-theme="${spaceTheme}" data-type="${type}"`;

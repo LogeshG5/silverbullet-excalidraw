@@ -23,7 +23,7 @@ const syscaller =
 interface AppProps {
     doc: ExcalidrawInitialDataState;
     fileName: string;
-    theme: Theme;
+    theme: string;
 }
 
 
@@ -53,7 +53,7 @@ function App({ doc, fileName, theme }: AppProps) {
             excalidrawApiRef.current = excalidrawApi;
             const data = await syscaller("space.readFile", fileName);
             const blob = getBlob(data, getExtension(fileName));
-            apiBridge.load({ blob: blob, viewMode: false });
+            apiBridge.load({ blob: blob, viewMode: false, theme: theme });
         },
         [fileName, apiBridge]
     );
@@ -80,7 +80,6 @@ function App({ doc, fileName, theme }: AppProps) {
                 // initialData={doc}
                 onChange={onChange}
                 viewModeEnabled={false}
-                theme={theme}
                 UIOptions={{
                     canvasActions: {
                         loadScene: false,
@@ -99,8 +98,7 @@ function App({ doc, fileName, theme }: AppProps) {
 
 export async function renderSvgEditorElement(rootElement: HTMLElement) {
     const fileName = rootElement.dataset.filename!;
-    const theme =
-        rootElement.dataset.darkmode === "true" ? THEME.DARK : THEME.LIGHT;
+    const theme = rootElement.dataset.theme || "light";
 
     let data = await syscaller("space.readFile", fileName);
     let svg: string;
@@ -110,7 +108,6 @@ export async function renderSvgEditorElement(rootElement: HTMLElement) {
         svg = data;
     }
     const doc: ExcalidrawInitialDataState = svg;
-    const isRoMode = (await syscaller("system.getMode")) === "ro";
     const root = ReactDOM.createRoot(rootElement);
     root.render(<App doc={doc} theme={theme} fileName={fileName} />);
 }
