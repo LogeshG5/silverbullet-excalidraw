@@ -1,6 +1,9 @@
 {
   "tasks": {
-    "build": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
+    "setup": "npm install --prefix editor",
+    "build:editor": "npm run build --prefix editor",
+    "build:plugin": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
+    "build": "deno run build:editor && deno run build:plugin",
     "watch": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -w -c deno.jsonc excalidraw.plug.yaml"
   },
   "lint": {

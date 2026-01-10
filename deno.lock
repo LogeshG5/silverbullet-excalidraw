@@ -208,7 +208,12 @@
     "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/types.ts": "e4decd11d40797161b4fed67cc432f370ceb159b4680c57dde97e6300ea0abfb",
     "https://deno.land/x/silverbullet@2.0.0-pre4/lib/plugos/worker_runtime.ts": "6f16899c0a3d2525c4bf3f881463bce2d7f2b8b55f072fd74ae0f621ba74fea0",
     "https://deno.land/x/silverbullet@2.0.0-pre4/lib/proxy_fetch.ts": "831d98cf7f9ada653fc958f52ad367d8511e2634400c29e1fe9d6babd230c0bf",
-    "https://deno.land/x/silverbullet@2.0.0-pre4/type/datastore.ts": "43ac83561844fc5224bd2d5c6c2a92a2cdda6688d29b798c624e3c90bca7ab9d"
+    "https://deno.land/x/silverbullet@2.0.0-pre4/type/datastore.ts": "43ac83561844fc5224bd2d5c6c2a92a2cdda6688d29b798c624e3c90bca7ab9d",
+    "https://deno.land/x/silverbullet@2.2.1/client/lib/logger.ts": "09e3b6eabdb29203573da50950c9a08e75d7ca4f05bb56258413a758dda6201b",
+    "https://deno.land/x/silverbullet@2.2.1/client/plugos/protocol.ts": "1eca91d1fc2ef66ee5ed25f7b44c04f518b2d275a9f3d2a7b31c32d4437dd547",
+    "https://deno.land/x/silverbullet@2.2.1/client/plugos/proxy_fetch.ts": "ab6d1c3944b3631d73756c53d960144e15ef63e4e657ca6e41d546495d6bf09a",
+    "https://deno.land/x/silverbullet@2.2.1/client/plugos/worker_runtime.ts": "0237c0c2d689bb47fc7561f835d081d8cc582b047b5867bea6e8c0b073b4ed55",
+    "https://deno.land/x/silverbullet@2.2.1/plug-api/lib/crypto.ts": "39bc1439bc0c8cf430ae8ae4cc5dbbe1cc35b0db02a7aae97029d62fcf1e61a7"
   },
   "workspace": {
     "dependencies": [
