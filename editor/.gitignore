@@ -8,5 +8,4 @@
 !.yarn/sdks
 !.yarn/versions
 editor/node_modules
-dist
 stats.html

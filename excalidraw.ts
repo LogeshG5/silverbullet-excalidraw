@@ -18,8 +18,8 @@ async function getHtmlJs(
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const theme = props.theme || spaceTheme;
-  const js = await asset.readAsset("excalidraw", "assets/editor.js");
-  const css = await asset.readAsset("excalidraw", "assets/editor.css");
+  const js = await asset.readAsset("excalidraw", "editor/dist/editor.js");
+  const css = await asset.readAsset("excalidraw", "editor/dist/style.css");
   const data = `data-filename="${path}" data-theme="${theme}" data-type="${type}"`;
 
   let html = "";
