@@ -32,7 +32,7 @@ jobs:
       - name: Update release tag
         uses: rickstaa/action-create-tag@v1
         with:
-          tag: "experimental"
+          tag: "experimental-edge"
           force_push_tag: true
 
       - name: Release
