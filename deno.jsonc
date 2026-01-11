@@ -4,7 +4,7 @@
     "setup-editor": "yarn --cwd editor install",
     "setup": "deno run setup-excalidraw && deno run setup-editor",
     "build:excalidraw": "yarn --cwd excalidraw run build:packages",
-    "build:editor": "yarn --cwd editor run build:sb",
+    "build:editor": "yarn --cwd editor run build:sb && cp editor/dist/editor.js assets/editor.js && cp editor/dist/style.css assets/style.css",
     "build:plugin": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -c deno.jsonc excalidraw.plug.yaml",
     "build": "deno run build:excalidraw && deno run build:editor && deno run build:plugin",
     "watch": "deno run -A https://github.com/silverbulletmd/silverbullet/releases/download/edge/plug-compile.js -w -c deno.jsonc excalidraw.plug.yaml"
