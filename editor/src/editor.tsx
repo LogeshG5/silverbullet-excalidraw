@@ -87,22 +87,19 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
                 apiBridgeRef.current.gridSize();
               },
             },
-            // {
-            //   ...CommandPalette.defaultItems.toggleTheme,
-            //   perform: () => {
-            //     console.log("Ha palette item");
-            //   },
-            // },
             {
-              label: "Align Elements",
+              label: "Fixed Spacing",
               category: DEFAULT_CATEGORIES.elements,
               predicate: true,
               keywords: [
                 "Align",
                 "elements",
+                "fixed",
+                "spacing",
               ],
               perform: async () => {
-                console.log("Align Elements");
+                apiBridgeRef.current.fixedSpacing();
+                console.log("Fixed Spacing");
               },
             },
           ]}

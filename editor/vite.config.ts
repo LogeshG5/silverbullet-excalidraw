@@ -14,8 +14,37 @@ export default defineConfig({
   resolve: {
     alias: [
       {
+        // Comment this if you want Japanese, Korean & Chinese fonts
         find: /.*Xiaolai-Regular.*\.(woff2|woff|ttf)$/,
         replacement: emptyFile,
+      },
+      {
+        find: /^@excalidraw\/common$/,
+        replacement: path.resolve(
+          __dirname,
+          "../excalidraw/packages/common/src/index.ts",
+        ),
+      },
+      {
+        find: /^@excalidraw\/common\/(.*?)/,
+        replacement: path.resolve(
+          __dirname,
+          "../excalidraw/packages/common/src/$1",
+        ),
+      },
+      {
+        find: /^@excalidraw\/element$/,
+        replacement: path.resolve(
+          __dirname,
+          "../excalidraw/packages/element/src/index.ts",
+        ),
+      },
+      {
+        find: /^@excalidraw\/element\/(.*?)/,
+        replacement: path.resolve(
+          __dirname,
+          "../excalidraw/packages/element/src/$1",
+        ),
       },
       {
         find: /^@excalidraw\/excalidraw$/,
@@ -54,7 +83,7 @@ export default defineConfig({
       type: "css",
     }),
     {
-      // works
+      // Uncomment this to keep locales
       name: "remove-locales",
       enforce: "pre", // Run before Vite's internal asset plugins
       resolveId(id) {
