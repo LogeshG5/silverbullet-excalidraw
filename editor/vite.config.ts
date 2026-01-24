@@ -115,7 +115,7 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
-      external: ["@excalidraw/mermaid-to-excalidraw"], // keep external fonts external
+      // external: ["@excalidraw/mermaid-to-excalidraw"], // keep external fonts external
     },
   },
 });

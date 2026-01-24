@@ -48,8 +48,14 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
 
   const excalidrawRef = useCallback(
     async (excalidrawApi: ExcalidrawImperativeAPI) => {
-      excalidrawApiRef.current = excalidrawApi;
+      // excalidrawApi.onEvent("editor:mount", ({ excalidrawAPI, container }) => {
+      //   console.log(container);
+      // });
 
+      excalidrawApi.onEvent("editor:initialize").then((readyApi) => {
+        excalidrawApiRef.current = readyApi;
+        readyApi.scrollToContent();
+      });
       const data = await syscaller("space.readFile", fileName);
       const blob = getBlob(data, getExtension(fileName));
       apiBridge.load({ blob: blob, viewMode: true, theme: theme });
@@ -72,7 +78,7 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
   return (
     <div className={"excalidraw-viewer"}>
       <Excalidraw
-        excalidrawAPI={excalidrawRef}
+        onExcalidrawAPI={excalidrawRef}
         isCollaborating={false}
         initialData={doc}
         onChange={onChange}

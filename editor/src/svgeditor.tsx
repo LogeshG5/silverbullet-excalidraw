@@ -48,7 +48,10 @@ function App({ doc, fileName, theme }: AppProps) {
 
   const excalidrawRef = useCallback(
     async (excalidrawApi: ExcalidrawImperativeAPI) => {
-      excalidrawApiRef.current = excalidrawApi;
+      excalidrawApi.onEvent("editor:initialize").then((readyApi) => {
+        excalidrawApiRef.current = readyApi;
+        readyApi.scrollToContent();
+      });
       const data = await syscaller("space.readFile", fileName);
       const blob = getBlob(data, getExtension(fileName));
       apiBridge.load({ blob: blob, viewMode: false, theme: theme });
@@ -73,7 +76,7 @@ function App({ doc, fileName, theme }: AppProps) {
   return (
     <div className={"excalidraw-editor"}>
       <Excalidraw
-        excalidrawAPI={excalidrawRef}
+        onExcalidrawAPI={excalidrawRef}
         isCollaborating={false}
         // initialData={doc}
         onChange={onChange}
