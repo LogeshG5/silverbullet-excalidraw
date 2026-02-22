@@ -209,12 +209,30 @@ async function writeEmptyExcalidrawFile(filePath: string): Promise<void> {
   await space.writeFile(filePath, content);
 }
 
-async function insertExcalidrawBlock(from: number, to: number, filePath: string): Promise<void> {
-  const block = `\`\`\`excalidraw
-url:${filePath}
-height:500px
-\`\`\``;
-  await editor.replaceRange(from, to, block);
+async function insertExcalidrawBlock(from: number, to: number, filePath: string): Promise<void> {    
+  const block = `\`\`\`excalidraw  
+url:${filePath}  
+height:500px  
+\`\`\``;   
+    
+  const lineText = await getLineAtPosition(from);    
+  const indentMatch = lineText.match(/^(\s*)/);    
+  let indent = indentMatch ? indentMatch[1] : "";  
+  
+  const trimmedLine = lineText.trim();  
+  if (trimmedLine.startsWith("*") || trimmedLine.startsWith("-")) {  
+    indent += "  ";  
+  }  
+
+  const indentedBlock = block.split('\n').map((l, i) => i === 0 ? l : indent + l).join('\n');      
+  await editor.replaceRange(from, to, indentedBlock);    
+}
+
+async function getLineAtPosition(pos: number): Promise<string> {  
+  const text = await editor.getText();  
+  const lineStart = text.lastIndexOf('\n', pos - 1) + 1;  
+  const lineEnd = text.indexOf('\n', pos);  
+  return text.slice(lineStart, lineEnd === -1 ? text.length : lineEnd);  
 }
 
 async function insertAttachment(from: number, to: number, name: string, filePath: string): Promise<void> {
