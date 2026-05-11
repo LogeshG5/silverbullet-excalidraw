@@ -12,11 +12,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -24,10 +19,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          deno task setup
+          yarn setup
 
       - name: Build step
-        run: "deno task build"
+        run: |
+          yarn build
 
       - name: Update release tag
         uses: rickstaa/action-create-tag@v1

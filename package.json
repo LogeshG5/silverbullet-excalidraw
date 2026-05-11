@@ -1,0 +1,19 @@
+{
+  "name": "silverbullet-excalidraw",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf node_modules excalidraw/node_modules editor/node_modules *.plug.js",
+    "setup-excalidraw": "yarn --cwd excalidraw install",
+    "setup-editor": "yarn --cwd editor install",
+    "setup-plugin": "yarn install",
+    "setup": "yarn setup-excalidraw && yarn setup-editor && yarn setup-plugin",
+    "build:excalidraw": "yarn --cwd excalidraw build:packages",
+    "build:editor": "yarn --cwd editor build",
+    "build:plugin": "npx plug-compile excalidraw.plug.yaml",
+    "build": "yarn build:excalidraw && yarn build:editor && yarn build:plugin"
+  },
+  "dependencies": {
+    "@silverbulletmd/silverbullet": ">=2.6.1"
+  }
+}
