@@ -25,27 +25,24 @@ async function getHtmlJs(
   let html = "";
   switch (type) {
     case "editor": {
-      html = `<style>${css}</style><div id="editor" ${data}></div>`;
-      break;
+      html = `<html> 
+              <head> <style> ${css} </style> <style> html, body { width: 100%; height: 100%; margin: 0; } </style> </head>
+              <body> <div id="editor" ${data}></div> <script type='text/javascript'>${js}</script> </body>
+              </html>`;
+      return { html: html, script: "" };
     }
     case "widget": {
       html = `<style>${css}</style><div id="widget" class="excalidraw-widget" style="height: ${props.height}" ${data}></div>`;
-      break;
+      return { html: html, script: js };
     }
     case "fullscreen": {
       html = `<style>${css}</style><div id="svgeditor" class="excalidraw-fullscreen" ${data}></div>`;
-      break;
+      return { html: html, script: js };
     }
   }
-
-  const script = `
-    ${js};
-  `;
-
-  return { html: html, script: script };
 }
 
-export async function openExcalidrawEditor(): Promise<{ html: string; script: string }> {
+export async function openExcalidrawEditor(): Promise<{ html: string }> {
   const path = await editor.getCurrentPage();
   return getHtmlJs(path, "editor");
 }
