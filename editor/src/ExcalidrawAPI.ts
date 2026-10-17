@@ -40,9 +40,12 @@ export class ExcalidrawApiBridge {
 
   private updateApp = (restoredData: RestoredDataState): void => {
     this.excalidraw().updateScene(restoredData);
-    this.excalidraw().scrollToContent(undefined, { fitToContent: true });
-    // Restore files(embedded images) specifically as updateScene wasn't enough
-    this.excalidrawRef.current!.addFiles(restoredData.files);
+    this.excalidraw().addFiles(restoredData.files);
+    this.excalidraw().setViewport({
+      target: this.excalidraw().getSceneElements(),
+      fit: "scale-down",
+      animation: false,
+    });
   };
 
   getJson = (): string => {
@@ -140,11 +143,11 @@ export class ExcalidrawApiBridge {
       });
   };
 
- /**
-   * 
-   * @param deepSelect: if set to true, child elements of the selected frame will also be selected
-   * @returns 
-   */
+  /**
+    * 
+    * @param deepSelect: if set to true, child elements of the selected frame will also be selected
+    * @returns 
+    */
   public getViewSelectedElements(includFrameChildren: boolean = true): ExcalidrawElement[] {
     const api = this.excalidraw();
     if (!api) {
@@ -178,36 +181,36 @@ export class ExcalidrawApiBridge {
             .map((be) => be.id)[0],
       );
 
-    if(includFrameChildren && elements.some(el=>el.type === "frame")) {
-      elements.filter(el=>el.type === "frame").forEach(frameEl => {
+    if (includFrameChildren && elements.some(el => el.type === "frame")) {
+      elements.filter(el => el.type === "frame").forEach(frameEl => {
         api.getSceneElements()
-          .filter(el=>el.frameId === frameEl.id)
-          .forEach(el=>elementIDs.add(el.id))
+          .filter(el => el.frameId === frameEl.id)
+          .forEach(el => elementIDs.add(el.id))
       })
     }
 
-    elements.forEach(el=>elementIDs.add(el.id));
-    containerBoundTextElmenetsReferencedInElements.forEach(id=>elementIDs.add(id));
+    elements.forEach(el => elementIDs.add(el.id));
+    containerBoundTextElmenetsReferencedInElements.forEach(id => elementIDs.add(id));
 
     return api
       .getSceneElements()
       .filter((el: ExcalidrawElement) => elementIDs.has(el.id));
   }
-/**
- * Transforms array of objects containing `id` attribute,
- * or array of ids (strings), into a Map, keyd by `id`.
- */
-public arrayToMap <T extends { id: string } | string>(
-  items: readonly T[] | Map<string, T>,
-) {
-  if (items instanceof Map) {
-    return items;
+  /**
+   * Transforms array of objects containing `id` attribute,
+   * or array of ids (strings), into a Map, keyd by `id`.
+   */
+  public arrayToMap<T extends { id: string } | string>(
+    items: readonly T[] | Map<string, T>,
+  ) {
+    if (items instanceof Map) {
+      return items;
+    }
+    return items.reduce((acc: Map<string, T>, element) => {
+      acc.set(typeof element === "string" ? element : element.id, element);
+      return acc;
+    }, new Map());
   }
-  return items.reduce((acc: Map<string, T>, element) => {
-    acc.set(typeof element === "string" ? element : element.id, element);
-    return acc;
-  }, new Map());
-}
   /**
    * Gets elements grouped by the highest level groups.
    * @param {ExcalidrawElement[]} elements - Array of elements to group.
@@ -232,25 +235,25 @@ public arrayToMap <T extends { id: string } | string>(
     // let appState = this.excalidraw().getAppState();
 
     const elements = this.getViewSelectedElements();
-const topGroups = this.getMaximumGroups(elements)
-    .filter(els => !(els.length === 1 && els[0].type ==="arrow")) // ignore individual arrows
-    .filter(els => !(els.length === 1 && (els[0].containerId))); // ignore text in stickynote
-const groups = topGroups.sort((lha,rha) => lha[0].x - rha[0].x); 
-for(var i=0; i<groups.length; i++) {
-    if(i > 0) {
-        const preGroup = groups[i-1];
+    const topGroups = this.getMaximumGroups(elements)
+      .filter(els => !(els.length === 1 && els[0].type === "arrow")) // ignore individual arrows
+      .filter(els => !(els.length === 1 && (els[0].containerId))); // ignore text in stickynote
+    const groups = topGroups.sort((lha, rha) => lha[0].x - rha[0].x);
+    for (var i = 0; i < groups.length; i++) {
+      if (i > 0) {
+        const preGroup = groups[i - 1];
         const curGroup = groups[i];
 
         const preRight = Math.max(...preGroup.map(el => el.x + el.width));
         const curLeft = Math.min(...curGroup.map(el => el.x));
         // const distance = curLeft -  preRight - spacing;
-        const distance = curLeft -  preRight - 50;
+        const distance = curLeft - preRight - 50;
 
-        for(const curEl of curGroup) {
-            curEl.x = curEl.x - distance;
+        for (const curEl of curGroup) {
+          curEl.x = curEl.x - distance;
         }
+      }
     }
-}
     console.log("------------- elements", elements);
   }
 }

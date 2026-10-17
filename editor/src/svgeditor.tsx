@@ -50,7 +50,11 @@ function App({ doc, fileName, theme }: AppProps) {
     async (excalidrawApi: ExcalidrawImperativeAPI) => {
       excalidrawApi.onEvent("editor:initialize").then((readyApi) => {
         excalidrawApiRef.current = readyApi;
-        readyApi.scrollToContent();
+        readyApi.setViewport({
+          target: readyApi.getSceneElements(),
+          fit: "scale-down",
+          animation: false,
+        });
       });
       const data = await syscaller("space.readFile", fileName);
       const blob = getBlob(data, getExtension(fileName));
