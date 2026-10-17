@@ -41,3 +41,4 @@ jobs:
           body: Automated build from commit ${{ github.sha }}
           files: |
             excalidraw.plug.js
+            editor/dist/excalidraw_editor.js

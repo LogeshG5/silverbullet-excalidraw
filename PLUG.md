@@ -3,6 +3,7 @@ name: Library/LogeshG5/silverbullet-excalidraw
 tags: meta/library
 files:
 - excalidraw.plug.js
+- excalidraw_editor.js
 ---
 # SilverBullet plug for Excalidraw diagrams
 

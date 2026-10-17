@@ -1,7 +1,6 @@
 name: excalidraw
 version: 0.1
 assets:
-  - "editor/dist/editor.js"
   - "editor/dist/style.css"
 imports:
   - https://get.silverbullet.md/global.plug.json

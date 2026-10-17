@@ -108,7 +108,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, "src/index.tsx"),
       name: "Editor", // global variable name for IIFE
       formats: ["iife"], // single IIFE file
-      fileName: () => "editor.js",
+      fileName: () => "excalidraw_editor.js",
     },
     minify: true,
     outDir: "dist",
