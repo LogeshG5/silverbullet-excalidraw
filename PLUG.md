@@ -43,6 +43,8 @@ If multiple diagrams are present in a page, you will be prompted to choose one.
 
 ## Lua Helper
 
+### Render Excalidraw Widget
+
 ```space-lua
 excalidraw = excalidraw or {}
 function excalidraw.render(url, height, theme)
@@ -63,5 +65,33 @@ function excalidraw.render(url, height, theme)
     script   = excali.script,
   }
 end
+```
+
+### Excalidraw Picker
+
+```space-lua
+view.define {
+  name = "excalidraw-files",
+  title = "Open",
+  command = "Navigate: Excalidraw Picker",
+  dock = "modal",
+  supportedDocks = { "modal", "lhs", "rhs", "bhs"},
+  source = function()
+    return query [[
+      from t = index.documents()
+      where t.extension == "excalidraw"
+    ]]
+  end,
+  presentation = {
+    mode = "list",
+    row = {
+      primary = "name",
+      description = "page"
+    }
+  },
+  onSelect = function(task)
+    editor.navigate(task.ref)
+  end,
+}
 ```
 

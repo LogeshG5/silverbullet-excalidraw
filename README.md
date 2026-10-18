@@ -34,6 +34,11 @@ height:600px
 theme:dark
 ```
 
+You can render an existing file using below lua function instead of the code widget,
+```
+${excalidraw.render("work.excalidraw")}
+```
+
 If you wish to create SVG/PNG files, Run `Excalidraw: Create SVG/PNG diagram`. 
 
 ### Use Document Picker
