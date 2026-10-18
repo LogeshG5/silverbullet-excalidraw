@@ -66,6 +66,7 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
     },
     [fileName, save]
   );
+  const libraryReturnUrl = window.parent.location.href;
 
   return (
     <div className={viewMode ? "excalidraw-viewer" : "excalidraw-editor"}>
@@ -77,6 +78,7 @@ function App({ doc, theme, viewMode, fileName }: AppProps) {
         onChange={onChange}
         viewModeEnabled={viewMode}
         zenModeEnabled={viewMode}
+        libraryReturnUrl={libraryReturnUrl}
         UIOptions={{
           canvasActions: {
             loadScene: true,
