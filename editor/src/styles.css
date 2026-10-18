@@ -56,8 +56,8 @@ kbd {
 
 #edit-button {
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 10px;
+  right: 10px;
 }
 
 #widget .button {
