@@ -7,13 +7,16 @@ import {
   exportToSvg,
   loadFromBlob,
   serializeAsJSON,
+  serializeLibraryAsJSON,
+  loadLibraryFromBlob,
   THEME,
 } from "@excalidraw/excalidraw";
 import type { RefObject, ReactElement } from "react";
 import { debounce, getExtension } from "./helpers";
-import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import type { ExcalidrawImperativeAPI, LibraryItems } from "@excalidraw/excalidraw/types";
 import { CaptureUpdateAction } from "@excalidraw/excalidraw";
 import { getMaximumGroups } from "@excalidraw/element";
+import { getBlob, getExtension } from "./helpers";
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
 
@@ -46,6 +49,7 @@ export class ExcalidrawApiBridge {
       fit: "scale-down",
       animation: false,
     });
+    this.loadLibraries();
   };
 
   getJson = (): string => {
@@ -142,6 +146,19 @@ export class ExcalidrawApiBridge {
         syscaller("editor.flashNotification", errorStr, "error");
       });
   };
+
+  public async saveLibraries(items: LibraryItems): Promise<void> {
+    const json = serializeLibraryAsJSON(items);
+    syscaller("space.writeFile", "Library/LogeshG5/Excalidraw/libraries.json", json);
+  }
+
+  private async loadLibraries() {
+    const fileName = "Library/LogeshG5/Excalidraw/libraries.json";
+    const data = await syscaller("space.readFile", fileName);
+    const blob = getBlob(data, getExtension(fileName));
+    const libraryItems = await loadLibraryFromBlob(blob);
+    this.excalidraw().updateLibrary({ libraryItems: libraryItems });
+  }
 
   /**
     * 

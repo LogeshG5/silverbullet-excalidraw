@@ -41,6 +41,12 @@ Run `Excalidraw: Edit diagram`.
 
 If multiple diagrams are present in a page, you will be prompted to choose one.
 
+### Using Libraries
+
+1. In the library sidebar, click **Browse libraries** to open [libraries.excalidraw.com](https://libraries.excalidraw.com/).
+2. Find your desired library and click **Download** (do not click *Add to Excalidraw*).
+3. Return to Silverbullet Excalidraw, click the **three dots menu (...)**, and select **Open** to load the downloaded file.
+
 ## Lua Helper
 
 ### Render Excalidraw Widget
