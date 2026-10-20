@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types";
 // import "@excalidraw/excalidraw/index.css";
 import { ExcalidrawApiBridge } from "./ExcalidrawAPI";
-import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import type { ExcalidrawImperativeAPI, LibraryItems } from "@excalidraw/excalidraw/types";
 import { Excalidraw, THEME } from "@excalidraw/excalidraw";
 import { getBlob, getExtension } from "./helpers";
 
@@ -34,6 +34,12 @@ function App({ doc, fileName, theme }: AppProps) {
 
   const onChange = useCallback(() => {
     apiBridge.debouncedSave();
+  },
+    [apiBridge]
+  );
+
+  const onLibraryChange = useCallback((items: LibraryItems) => {
+    apiBridge.saveLibraries(items);
   },
     [apiBridge]
   );
@@ -84,6 +90,7 @@ function App({ doc, fileName, theme }: AppProps) {
         isCollaborating={false}
         // initialData={doc}
         onChange={onChange}
+        onLibraryChange={onLibraryChange}
         viewModeEnabled={false}
         UIOptions={{
           canvasActions: {
