@@ -2,20 +2,6 @@
 
 This plug adds [Excalidraw](https://excalidraw.com/) support to Silverbullet.
 
-## Installation
-
-The plug is installed like any other plug using SpaceLua. Just add `ghr:LogeshG5/silverbullet-excalidraw` to the plugs array in your CONFIG page.
-
-```space-lua
-config.set {
-  plugs = {
-  "ghr:LogeshG5/silverbullet-excalidraw"
-  }
-}
-```
-
-Run `Plugs: Update` command and off you go!
-
 ## Usage
 
 https://github.com/user-attachments/assets/1402f02d-b85b-4cb9-866f-16ab7b478f9c

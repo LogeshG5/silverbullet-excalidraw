@@ -2,12 +2,18 @@
 name: Library/LogeshG5/silverbullet-excalidraw
 tags: meta/library
 files:
-- excalidraw.plug.js
-- excalidraw_editor.js
+- Silverbullet-Excalidraw/excalidraw.plug.js
+- Silverbullet-Excalidraw/excalidraw_editor.js
+- Silverbullet-Excalidraw/libraries.json
+- Silverbullet-Excalidraw/lua-helpers.md
 ---
 # SilverBullet plug for Excalidraw diagrams
 
 This plug adds [Excalidraw](https://excalidraw.com/) support to Silverbullet.
+
+## Usage
+
+https://github.com/user-attachments/assets/1402f02d-b85b-4cb9-866f-16ab7b478f9c
 
 ### Create New Diagram
 
@@ -46,58 +52,4 @@ If multiple diagrams are present in a page, you will be prompted to choose one.
 1. In the library sidebar, click **Browse libraries** to open [libraries.excalidraw.com](https://libraries.excalidraw.com/).
 2. Find your desired library and click **Download** (do not click *Add to Excalidraw*).
 3. Return to Silverbullet Excalidraw, click the **three dots menu (...)**, and select **Open** to load the downloaded file.
-
-## Lua Helper
-
-### Render Excalidraw Widget
-
-```space-lua
-excalidraw = excalidraw or {}
-function excalidraw.render(url, height, theme)
-  height = height or 500
-  local lines = {
-    "url:" .. url,
-    "height:" .. height .. "px"
-  }
-  if theme then
-    table.insert(lines, "theme:" .. theme)
-  end
-  local body = table.concat(lines, "\n")
-
-  local excali = codeWidget.render('excalidraw', body, '')
-  return widget.sandbox {
-    html     = excali.html,
-    markdown = "Not supported",
-    script   = excali.script,
-  }
-end
-```
-
-### Excalidraw Picker
-
-```space-lua
-view.define {
-  name = "excalidraw-files",
-  title = "Open",
-  command = "Navigate: Excalidraw Picker",
-  dock = "modal",
-  supportedDocks = { "modal", "lhs", "rhs", "bhs"},
-  source = function()
-    return query [[
-      from t = index.documents()
-      where t.extension == "excalidraw"
-    ]]
-  end,
-  presentation = {
-    mode = "list",
-    row = {
-      primary = "name",
-      description = "page"
-    }
-  },
-  onSelect = function(task)
-    editor.navigate(task.ref)
-  end,
-}
-```
 
