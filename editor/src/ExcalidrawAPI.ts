@@ -19,6 +19,7 @@ import { getMaximumGroups } from "@excalidraw/element";
 import { getBlob, getExtension } from "./helpers";
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
+const LIBRARIES_URL = import.meta.env.EXCALIDRAW_PLUGIN_LIBRARIES_JSON_URL;
 
 
 export class ExcalidrawApiBridge {
@@ -149,13 +150,12 @@ export class ExcalidrawApiBridge {
 
   public async saveLibraries(items: LibraryItems): Promise<void> {
     const json = serializeLibraryAsJSON(items);
-    syscaller("space.writeFile", "Library/LogeshG5/Excalidraw/libraries.json", json);
+    syscaller("space.writeFile", LIBRARIES_URL, json);
   }
 
   private async loadLibraries() {
-    const fileName = "Library/LogeshG5/Excalidraw/libraries.json";
-    const data = await syscaller("space.readFile", fileName);
-    const blob = getBlob(data, getExtension(fileName));
+    const data = await syscaller("space.readFile", LIBRARIES_URL);
+    const blob = getBlob(data, getExtension(LIBRARIES_URL));
     const libraryItems = await loadLibraryFromBlob(blob);
     this.excalidraw().updateLibrary({ libraryItems: libraryItems });
   }

@@ -2,7 +2,7 @@
 name: Library/LogeshG5/silverbullet-excalidraw
 tags: meta/library
 files:
-- Silverbullet-Excalidraw/excalidraw.plug.js
+- excalidraw.plug.js
 - Silverbullet-Excalidraw/excalidraw_editor.js
 - Silverbullet-Excalidraw/libraries.json
 - Silverbullet-Excalidraw/lua-helpers.md

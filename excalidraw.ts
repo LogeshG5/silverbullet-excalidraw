@@ -18,7 +18,7 @@ async function getHtmlJs(
 ): Promise<{ html: string; script: string }> {
   const spaceTheme = (await clientStore.get("darkMode")) ? "dark" : "light";
   const theme = props.theme || spaceTheme;
-  const jsbinary = await space.readFile("Library/LogeshG5/excalidraw_editor.js");
+  const jsbinary = await space.readFile("Library/LogeshG5/Silverbullet-Excalidraw/excalidraw_editor.js");
   const decoder = new TextDecoder("utf-8");
   const js: string = decoder.decode(jsbinary);
   const css = await asset.readAsset("excalidraw", "editor/dist/style.css");
