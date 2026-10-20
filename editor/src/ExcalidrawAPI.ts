@@ -19,7 +19,7 @@ import { getMaximumGroups } from "@excalidraw/element";
 import { getBlob, getExtension } from "./helpers";
 
 const syscaller = (typeof silverbullet !== "undefined" ? silverbullet.syscall : syscall);
-const LIBRARIES_URL = import.meta.env.EXCALIDRAW_PLUGIN_LIBRARIES_JSON_URL;
+const LIBRARIES_URL = import.meta.env.VITE_APP_LIBRARIES_JSON_URL;
 
 
 export class ExcalidrawApiBridge {
@@ -154,6 +154,7 @@ export class ExcalidrawApiBridge {
   }
 
   private async loadLibraries() {
+    console.log("Debug: ", LIBRARIES_URL);
     const data = await syscaller("space.readFile", LIBRARIES_URL);
     const blob = getBlob(data, getExtension(LIBRARIES_URL));
     const libraryItems = await loadLibraryFromBlob(blob);
