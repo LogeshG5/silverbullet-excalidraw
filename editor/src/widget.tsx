@@ -91,7 +91,7 @@ function App({ doc, fileName, theme, viewMode }: AppProps) {
         UIOptions={{
           canvasActions: {
             loadScene: false,
-            saveAsImage: false,
+            saveAsImage: true,
             saveToActiveFile: false,
           },
         }}
