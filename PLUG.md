@@ -4,7 +4,6 @@ tags: meta/library
 files:
 - excalidraw.plug.js
 - Silverbullet-Excalidraw/excalidraw_editor.js
-- Silverbullet-Excalidraw/libraries.json
 - Silverbullet-Excalidraw/lua-helpers.md
 ---
 # SilverBullet plug for Excalidraw diagrams
